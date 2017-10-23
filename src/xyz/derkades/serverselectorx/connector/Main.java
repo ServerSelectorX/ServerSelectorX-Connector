@@ -46,6 +46,9 @@ public class Main extends JavaPlugin {
 		List<Addon> addons = new ArrayList<>();
 		
 		File addonsFolder = new File(getDataFolder() + "/addons");
+		
+		addonsFolder.mkdirs();
+		
 		for (File addonFolder : addonsFolder.listFiles()) {
 			if (!addonFolder.isDirectory()) {
 				getLogger().warning("Non-addon file detected in addons folder: " + addonFolder.getName());
