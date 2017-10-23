@@ -9,10 +9,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Addon {
 	
-	//private Class<? extends AddonClass> classFile;
 	private AddonClass addonClass;
 	private String name;
-	//private List<String> requiredPlugins;
 	private String description;
 	private String author;
 	private String version;
@@ -21,10 +19,7 @@ public class Addon {
 	private FileConfiguration config;
 	
 	public Addon(AddonClass addonClass, String name, String description, String author, String version, String license){
-		//this.classFile = classFile;
 		this.addonClass = addonClass;
-		//this.name = name;
-		//this.requiredPlugins = requiredPlugins;
 		this.name = name;
 		this.description = description;
 		this.author = author;
