@@ -1,5 +1,5 @@
 name: SSX-Connector
-main: xyz.derkades.serverselectorx.connector
+main: xyz.derkades.serverselectorx.connector.Main
 version: beta
 author: Derkades
 description: 'Addon plugin for ServerSelectorX'
