@@ -1,0 +1,11 @@
+name: SSX-Connector
+main: xyz.derkades.serverselectorx.connector
+version: beta
+author: Derkades
+description: 'Addon plugin for ServerSelectorX'
+
+commands:
+  ssxc:
+    aliases: [serverselectorxconnector, ssxconnector]
+    usage: |
+      /ssxc reload - Reload configuration files of all addons
