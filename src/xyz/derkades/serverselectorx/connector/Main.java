@@ -38,15 +38,12 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
 		
-		//Send request for server name to bungee, received down below.
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("GetServer");
-		//Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); // We don't care about the player
-		Bukkit.getServer().sendPluginMessage(this, "BungeeCord", out.toByteArray());
+		askBungeeForServerName();
 		
 		Bukkit.getScheduler().runTaskTimer(this, () -> {
 			if (serverName == null) {
 				getLogger().warning("Server name not yet recieved from BungeeCord");
+				askBungeeForServerName();
 				return;
 			}
 			
@@ -56,6 +53,14 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 				e.printStackTrace();
 			}
 		}, 20, 20);
+	}
+	
+	private void askBungeeForServerName() {
+		//Send request for server name to bungee, received down below.
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF("GetServer");
+		//Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); // We don't care about the player
+		Bukkit.getServer().sendPluginMessage(this, "BungeeCord", out.toByteArray());
 	}
 	
 	@Override
