@@ -56,6 +56,10 @@ public class Addon {
 			return config;
 		}
 		
+		if (addonClass.getConfigDefaults() == null) {
+			throw new UnsupportedOperationException("Can't request config if it has not been created. If you want a configuration file to be created, return config defaults.");
+		}
+		
 		File file = new File(Main.plugin.getDataFolder(), name + ".yml");
 		if (!file.exists()) {
 			config = new YamlConfiguration();
@@ -75,6 +79,8 @@ public class Addon {
 	}
 	
 	void saveConfig() {
+		if (config == null) return;
+		
 		try {
 			File file = new File(Main.plugin.getDataFolder(), name + ".yml");
 			config.save(file);
