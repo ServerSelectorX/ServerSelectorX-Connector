@@ -64,10 +64,9 @@ public class Main extends JavaPlugin {
 			String author = infoConfig.getString("author");
 			String version = infoConfig.getString("version");
 			String license = infoConfig.getString("license");
-			String className = infoConfig.getString("class");
 			List<String> requiredPlugins = infoConfig.getStringList("depends");
 			
-			if (name == null || description == null || author == null || version == null || license == null || className == null) {
+			if (name == null || description == null || author == null || version == null || license == null) {
 				getLogger().warning("Addon with name " + addonFolder.getName() + " could not be loaded due to missing information in info.yml");
 				continue;
 			}
@@ -92,7 +91,7 @@ public class Main extends JavaPlugin {
 			AddonClass addonClass;
 			
 			try (URLClassLoader loader = new URLClassLoader(new URL[]{codeFile.toURI().toURL()});){
-				Class<?> clazz = loader.loadClass(className);
+				Class<?> clazz = loader.loadClass("code");
 				addonClass = (AddonClass) clazz.newInstance();
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
 				e.printStackTrace();
