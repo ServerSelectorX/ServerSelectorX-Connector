@@ -18,7 +18,6 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.google.common.collect.Iterables;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
@@ -42,8 +41,8 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 		//Send request for server name to bungee, received down below.
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("GetServer");
-		Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); // We don't care about the player
-		player.sendPluginMessage(this, "BungeeCord", out.toByteArray());
+		//Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); // We don't care about the player
+		Bukkit.getServer().sendPluginMessage(this, "BungeeCord", out.toByteArray());
 		
 		Bukkit.getScheduler().runTaskTimer(this, () -> {
 			if (serverName == null) {
@@ -149,7 +148,7 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 	}
 	
 	private void sendToBungee(String placeholder, String output) throws IOException {
-		Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); //We don't care about which player the message is sent from
+		//Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); //We don't care about which player the message is sent from
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
 		DataOutputStream dos = new DataOutputStream(baos);			    
 		dos.writeUTF("Forward");
@@ -162,9 +161,9 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 	    out.writeUTF(placeholder);
 	    out.writeUTF(output);
 
-	    out.writeShort(msgbytes.toByteArray().length);
-	    out.write(msgbytes.toByteArray());
-	    player.sendPluginMessage(this, "BungeeCord", baos.toByteArray());
+	    dos.writeShort(msgbytes.toByteArray().length);
+	    dos.write(msgbytes.toByteArray());
+	    Bukkit.getServer().sendPluginMessage(this, "BungeeCord", baos.toByteArray());
 	}
 
 }
