@@ -16,14 +16,19 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import com.google.common.collect.Iterables;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
-public class Main extends JavaPlugin {
+public class Main extends JavaPlugin implements PluginMessageListener {
 	
 	public static Main plugin;
 	
 	private List<Addon> addons;
+	private String serverName;
 	
 	@Override
 	public void onEnable() {
@@ -31,15 +36,41 @@ public class Main extends JavaPlugin {
 		
 		this.addons = loadAddons();
 		
-		getServer().getMessenger().registerOutgoingPluginChannel(this, "ServerSelectorX");
+		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
+		
+		//Send request for server name to bungee, received down below.
+		ByteArrayDataOutput out = ByteStreams.newDataOutput();
+		out.writeUTF("GetServer");
+		Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); // We don't care about the player
+		player.sendPluginMessage(this, "BungeeCord", out.toByteArray());
 		
 		Bukkit.getScheduler().runTaskTimer(this, () -> {
+			if (serverName == null) {
+				getLogger().warning("Server name not yet recieved from BungeeCord");
+				return;
+			}
+			
 			try {
 				sendPlaceholdersToBungee();
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}, 20, 5*20);
+		}, 20, 20);
+	}
+	
+	@Override
+	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
+		if (!channel.equals("BungeeCord")) {
+			return;
+		}
+		
+		ByteArrayDataInput in = ByteStreams.newDataInput(message);
+		String subchannel = in.readUTF();
+		if (subchannel.equals("GetServer")) {
+			String serverName = in.readUTF();
+			this.serverName = serverName;
+		}
 	}
 	
 	private List<Addon> loadAddons() {
@@ -120,11 +151,20 @@ public class Main extends JavaPlugin {
 	private void sendToBungee(String placeholder, String output) throws IOException {
 		Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); //We don't care about which player the message is sent from
 		ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-		DataOutputStream dos = new DataOutputStream(baos);		
-	    dos.writeUTF("Placeholder");
-	    dos.writeUTF(placeholder);
-	    dos.writeUTF(output);
-	    player.sendPluginMessage(this, "ServerSelectorX", baos.toByteArray());
+		DataOutputStream dos = new DataOutputStream(baos);			    
+		dos.writeUTF("Forward");
+	    dos.writeUTF("ALL");
+	    dos.writeUTF("ServerSelectorX-Placeholder");
+
+	    ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
+	    DataOutputStream out = new DataOutputStream(msgbytes);
+	    out.writeUTF(serverName);
+	    out.writeUTF(placeholder);
+	    out.writeUTF(output);
+
+	    out.writeShort(msgbytes.toByteArray().length);
+	    out.write(msgbytes.toByteArray());
+	    player.sendPluginMessage(this, "BungeeCord", baos.toByteArray());
 	}
 
 }
