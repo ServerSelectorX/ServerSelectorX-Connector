@@ -89,9 +89,11 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	private void connect() {
 		try {
 			client.connect();
-			getLogger().info("Connected!");
+			getLogger().info("Connected to server!");
 		} catch (Exception e) {
-			getLogger().info("Couldn't connect to server, retrying in 5 seconds.");
+			getLogger().warning("Couldn't connect to server, retrying in 5 seconds.");
+			getLogger().warning(e.getMessage());
+			getLogger().warning("Make sure your ip and port are correct in config.yml");
 			Bukkit.getScheduler().runTaskLater(this, () -> {
 				connect();
 			}, 5* 20);
