@@ -14,11 +14,10 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.google.gson.Gson;
 import com.mitch528.sockets.Sockets.Client;
-import com.mitch528.sockets.events.MessageReceivedEvent;
-import com.mitch528.sockets.events.MessageReceivedEventListener;
 import com.mitch528.sockets.events.SocketConnectedEvent;
 import com.mitch528.sockets.events.SocketConnectedEventListener;
 import com.mitch528.sockets.events.SocketDisconnectedEvent;
@@ -32,7 +31,9 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	
 	private Client client;
 	
-	Gson gson;
+	private Gson gson;
+	
+	private BukkitTask sender;
 	
 	@Override
 	public void onEnable() {
@@ -42,7 +43,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		
 		this.addons = loadAddons();
 		
-		Bukkit.getScheduler().runTaskTimerAsynchronously(Main.this, () -> {
+		sender = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.this, () -> {
 			if (client == null || !client.isConnected()) {
 				try {
 					initClient();
@@ -54,15 +55,25 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 				}
 			}
 			
-			getLogger().info("Client is already initialized, sending message...");
-			
 			try {
 				client.sendMessage(getPlaceholdersString());
 			} catch (Exception e) {
 				getLogger().warning("Cannot send information to server. Is it down?");
 				getLogger().warning(e.getMessage());
+				client = null;
 			}
 		}, 5*20, 5*20);
+	}
+	
+	@Override
+	public void onDisable() {
+		sender.cancel();
+		
+		try {
+			client.disconnect();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void initClient() throws Exception {
@@ -75,11 +86,11 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 
 		client.getHandler().getConnected().addSocketConnectedEventListener(new SocketConnectedEventListener() {
 			public void socketConnected(SocketConnectedEvent evt) {
-				getLogger().info("Client - Connected to server!");
+				getLogger().info(String.format("Connection with server (%s:%s) has been established!", ip, port));
 			}
 		});
 
-		client.getHandler().getMessage().addMessageReceivedEventListener(new MessageReceivedEventListener() {
+		/*client.getHandler().getMessage().addMessageReceivedEventListener(new MessageReceivedEventListener() {
 			public void messageReceived(MessageReceivedEvent evt) {
 				getLogger().info("Client - I got the following message: " + evt.getMessage());
 				try {
@@ -88,11 +99,11 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 					e.printStackTrace();
 				}
 			}
-		});
+		});*/
 
 		client.getHandler().getDisconnected().addSocketDisconnectedEventListener(new SocketDisconnectedEventListener() {
 			public void socketDisconnected(SocketDisconnectedEvent evt) {
-				getLogger().info("Client - Disconnected");
+				getLogger().info("Disconnected from server");
 			}
 		});
 
