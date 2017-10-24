@@ -46,8 +46,12 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			if (client == null) {
 				try {
 					initClient();
-				} catch (IOException e) {
-					e.printStackTrace();
+					
+				} catch (Exception e) {
+					getLogger().info("Connected to server!");
+					getLogger().warning("Couldn't connect to server");
+					getLogger().warning(e.getMessage());
+					return;
 				}
 			}
 			
@@ -59,14 +63,14 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 				getLogger().warning("Cannot send information to server. Is it down?");
 				getLogger().warning(e.getMessage());
 			}
-		}, 20, 20);
+		}, 5*20, 5*20);
 	}
 	
-	private void initClient() throws IOException {
+	private void initClient() throws Exception {
 		String ip = getConfig().getString("ip");
 		int port = getConfig().getInt("port");
 		
-		if (client != null) client.disconnect();
+		if (client != null && client.isConnected()) client.disconnect();
 			
 		client = new Client(ip, port);
 
@@ -93,21 +97,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			}
 		});
 
-		connect();
-	}
-	
-	private void connect() {
-		try {
-			client.connect();
-			getLogger().info("Connected to server!");
-		} catch (Exception e) {
-			getLogger().warning("Couldn't connect to server, retrying in 5 seconds.");
-			getLogger().warning(e.getMessage());
-			getLogger().warning("Make sure your ip and port are correct in config.yml");
-			Bukkit.getScheduler().runTaskLater(this, () -> {
-				connect();
-			}, 5* 20);
-		}
+		client.connect();
 	}
 	
 	private String getPlaceholdersString() {
