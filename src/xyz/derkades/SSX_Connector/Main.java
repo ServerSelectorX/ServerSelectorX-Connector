@@ -91,17 +91,6 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			}
 		});
 
-		/*client.getHandler().getMessage().addMessageReceivedEventListener(new MessageReceivedEventListener() {
-			public void messageReceived(MessageReceivedEvent evt) {
-				getLogger().info("Client - I got the following message: " + evt.getMessage());
-				try {
-					client.disconnect();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		});*/
-
 		client.getHandler().getDisconnected().addSocketDisconnectedEventListener(new SocketDisconnectedEventListener() {
 			public void socketDisconnected(SocketDisconnectedEvent evt) {
 				getLogger().info("Disconnected from server");
