@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Addon {
@@ -55,9 +54,9 @@ public class Addon {
 		return addonClass.getPlaceholders();
 	}
 	
-	FileConfiguration loadConfig() {		
+	void loadConfig() {		
 		if (addonClass.getConfigDefaults() == null) {
-			throw new UnsupportedOperationException("Can't request config if it has not been created. If you want a configuration file to be created, return config defaults.");
+			return;
 		}
 		
 		File file = new File(directory, "config.yml");
@@ -70,8 +69,6 @@ public class Addon {
 		} else {
 			addonClass.config = YamlConfiguration.loadConfiguration(file);
 		}
-		
-		return addonClass.config;
 	}
 
 }
