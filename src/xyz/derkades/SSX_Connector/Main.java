@@ -68,6 +68,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	@Override
 	public void onDisable() {
 		sender.cancel();
+		Bukkit.getServer().getScheduler().cancelTasks(this);
 		
 		try {
 			client.disconnect();
