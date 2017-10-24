@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -13,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.gson.Gson;
 import com.mitch528.sockets.Sockets.Client;
 import com.mitch528.sockets.events.MessageReceivedEvent;
 import com.mitch528.sockets.events.MessageReceivedEventListener;
@@ -29,9 +32,13 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	
 	private Client client;
 	
+	Gson gson;
+	
 	@Override
 	public void onEnable() {
 		plugin = this;
+		
+		gson = new Gson();
 		
 		this.addons = loadAddons();
 		
@@ -46,7 +53,12 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 				getLogger().info("Client - Sending message to server.");
 				
 				Bukkit.getScheduler().runTaskTimer(Main.this, () -> {
-					client.sendMessage("Hello World!");
+					try {
+						client.sendMessage(getPlaceholdersString());
+					} catch (Exception e) {
+						getLogger().warning("Cannot send information to server. Is it down?");
+						getLogger().warning(e.getMessage());
+					}
 				}, 20, 20);
 			}
 		});
@@ -54,7 +66,11 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		client.getHandler().getMessage().addMessageReceivedEventListener(new MessageReceivedEventListener(){
 			public void messageReceived(MessageReceivedEvent evt){
 				getLogger().info("Client - I got the following message: " + evt.getMessage());
-				client.disconnect();
+				try { 
+					client.disconnect();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		
@@ -98,6 +114,18 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 				connect();
 			}, 5* 20);
 		}
+	}
+	
+	private String getPlaceholdersString() {
+		Map<String, String> placeholders = new HashMap<>();
+		
+		placeholders.put("server", getConfig().getString("server-name"));
+		
+		for (Addon addon : addons) {
+			placeholders.putAll(addon.getPlaceholders());
+		}
+		
+		return gson.toJson(placeholders);
 	}
 	
 	/*private void askBungeeForServerName() {
