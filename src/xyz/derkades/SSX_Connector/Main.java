@@ -168,7 +168,8 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			
 			AddonClass addonClass;
 			
-			try (URLClassLoader loader = new URLClassLoader(new URL[]{codeFile.toURI().toURL()});){
+			try (URLClassLoader loader = new URLClassLoader(new URL[]{codeFile.toURI().toURL()})){
+				getLogger().info("[debug] loading " + loader.getURLs()[0].toString());
 				Class<?> clazz = loader.loadClass("code");
 				addonClass = (AddonClass) clazz.newInstance();
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
