@@ -1,30 +1,34 @@
 package xyz.derkades.SSX_Connector;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class Addon {
 	
 	private AddonClass addonClass;
+	private File directory;
 	private String name;
 	private String description;
 	private String author;
 	private String version;
 	private String license;
 	
-	private FileConfiguration config;
-	
-	public Addon(AddonClass addonClass, String name, String description, String author, String version, String license){
+	public Addon(Main plugin, AddonClass addonClass, File directory, String name, String description, String author, String version, String license){
 		this.addonClass = addonClass;
+		this.directory = directory;
 		this.name = name;
 		this.description = description;
 		this.author = author;
 		this.version = version;
 		this.license = license;
+		
+		loadConfig();
+		Bukkit.getPluginManager().registerEvents(addonClass, plugin);
+		addonClass.onLoad();
 	}
 	
 	String getName() {
@@ -51,42 +55,23 @@ public class Addon {
 		return addonClass.getPlaceholders();
 	}
 	
-	FileConfiguration getConfig() {
-		if (config != null) {
-			return config;
-		}
-		
+	FileConfiguration loadConfig() {		
 		if (addonClass.getConfigDefaults() == null) {
 			throw new UnsupportedOperationException("Can't request config if it has not been created. If you want a configuration file to be created, return config defaults.");
 		}
 		
-		File file = new File(Main.plugin.getDataFolder(), name + ".yml");
+		File file = new File(directory, "config.yml");
 		if (!file.exists()) {
-			config = new YamlConfiguration();
-			config.addDefault("info", "If you don't understand how to configure this addon, maybe the developer has put instructions in info.yml");
+			addonClass.config = new YamlConfiguration();
+			addonClass.config.addDefault("info", "If you don't understand how to configure this addon, maybe the developer has put instructions in info.yml");
 			for (Map.Entry<String, String> entry : addonClass.getConfigDefaults().entrySet()) {
-				config.addDefault(entry.getKey(), entry.getValue());
+				addonClass.config.addDefault(entry.getKey(), entry.getValue());
 			}	
 		} else {
-			config = YamlConfiguration.loadConfiguration(file);
+			addonClass.config = YamlConfiguration.loadConfiguration(file);
 		}
 		
-		return config;
-	}
-	
-	void reloadConfig() {
-		config = null;
-	}
-	
-	void saveConfig() {
-		if (config == null) return;
-		
-		try {
-			File file = new File(Main.plugin.getDataFolder(), name + ".yml");
-			config.save(file);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		return addonClass.config;
 	}
 
 }

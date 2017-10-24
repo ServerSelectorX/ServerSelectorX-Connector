@@ -173,7 +173,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 				continue;
 			}
 			
-			Addon addon = new Addon(addonClass, name, description, author, version, license);
+			Addon addon = new Addon(this, addonClass, addonFolder, name, description, author, version, license);
 			getLogger().info(String.format("Successfully loaded addon %s by %s version %s", name, author, version));
 			addons.add(addon);
 		}
