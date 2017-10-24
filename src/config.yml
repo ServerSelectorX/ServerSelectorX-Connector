@@ -1,0 +1,7 @@
+# The ip and port of your hub server.
+# The port can be configured in 'server.yml' in your ServerSelectorX folder
+ip: 'localhost'
+port: 9876
+
+# This server's name in BungeeCord. It is very important that you enter this correctly!
+server-name: 'kitpvp'

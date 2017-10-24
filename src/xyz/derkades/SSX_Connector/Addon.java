@@ -1,4 +1,4 @@
-package xyz.derkades.serverselectorx.connector;
+package xyz.derkades.SSX_Connector;
 
 import java.io.File;
 import java.io.IOException;

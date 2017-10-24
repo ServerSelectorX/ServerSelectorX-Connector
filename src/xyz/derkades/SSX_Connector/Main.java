@@ -1,33 +1,33 @@
-package xyz.derkades.serverselectorx.connector;
+package xyz.derkades.SSX_Connector;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.messaging.PluginMessageListener;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
+import com.mitch528.sockets.Sockets.Client;
+import com.mitch528.sockets.events.MessageReceivedEvent;
+import com.mitch528.sockets.events.MessageReceivedEventListener;
+import com.mitch528.sockets.events.SocketConnectedEvent;
+import com.mitch528.sockets.events.SocketConnectedEventListener;
+import com.mitch528.sockets.events.SocketDisconnectedEvent;
+import com.mitch528.sockets.events.SocketDisconnectedEventListener;
 
-public class Main extends JavaPlugin implements PluginMessageListener {
+public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	
 	public static Main plugin;
 	
 	private List<Addon> addons;
-	private String serverName;
+	
+	private Client client;
 	
 	@Override
 	public void onEnable() {
@@ -35,7 +35,36 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 		
 		this.addons = loadAddons();
 		
-		getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+		String ip = getConfig().getString("ip");
+		int port = getConfig().getInt("port");
+		
+		client = new Client(ip, port);
+		
+		client.getHandler().getConnected().addSocketConnectedEventListener(new SocketConnectedEventListener(){
+			public void socketConnected(SocketConnectedEvent evt){
+				getLogger().info("Client - Connected to server!");
+				getLogger().info("Client - Sending message to server.");
+				
+				Bukkit.getScheduler().runTaskTimer(Main.this, () -> {
+					client.sendMessage("Hello World!");
+				}, 20, 20);
+			}
+		});
+		
+		client.getHandler().getMessage().addMessageReceivedEventListener(new MessageReceivedEventListener(){
+			public void messageReceived(MessageReceivedEvent evt){
+				getLogger().info("Client - I got the following message: " + evt.getMessage());
+				client.disconnect();
+			}
+		});
+		
+		client.getHandler().getDisconnected().addSocketDisconnectedEventListener(new SocketDisconnectedEventListener(){
+			public void socketDisconnected(SocketDisconnectedEvent evt){
+				getLogger().info("Client - Disconnected");
+			}
+		});
+		
+		/*getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
 		
 		askBungeeForServerName();
@@ -52,10 +81,10 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}, 20, 20);
+		}, 20, 20);*/
 	}
 	
-	private void askBungeeForServerName() {
+	/*private void askBungeeForServerName() {
 		//Send request for server name to bungee, received down below.
 		ByteArrayDataOutput out = ByteStreams.newDataOutput();
 		out.writeUTF("GetServer");
@@ -75,7 +104,7 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 			String serverName = in.readUTF();
 			this.serverName = serverName;
 		}
-	}
+	}*/
 	
 	private List<Addon> loadAddons() {
 		List<Addon> addons = new ArrayList<>();
@@ -144,17 +173,17 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 		return addons;
 	}
 	
-	private void sendPlaceholdersToBungee() throws IOException {
+	/*private void sendPlaceholdersToBungee() throws IOException {
 		for (Addon addon : addons) {
 			for (Map.Entry<String, String> entry : addon.getPlaceholders().entrySet()) {
 				sendToBungee(entry.getKey(), entry.getValue());
 			}
 		}
-	}
+	}*/
 	
-	private void sendToBungee(String placeholder, String output) throws IOException {
+	//private void sendToBungee(String placeholder, String output) throws IOException {
 		//Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); //We don't care about which player the message is sent from
-		ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
+		/*ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
 		DataOutputStream dos = new DataOutputStream(baos);			    
 		dos.writeUTF("Forward");
 	    dos.writeUTF("ALL");
@@ -168,7 +197,7 @@ public class Main extends JavaPlugin implements PluginMessageListener {
 
 	    dos.writeShort(msgbytes.toByteArray().length);
 	    dos.write(msgbytes.toByteArray());
-	    Bukkit.getServer().sendPluginMessage(this, "BungeeCord", baos.toByteArray());
-	}
+	    Bukkit.getServer().sendPluginMessage(this, "BungeeCord", baos.toByteArray());*/
+	//}
 
 }
