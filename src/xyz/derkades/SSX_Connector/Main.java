@@ -45,42 +45,45 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		String ip = getConfig().getString("ip");
 		int port = getConfig().getInt("port");
 		
-		client = new Client(ip, port);
+		Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
 		
-		client.getHandler().getConnected().addSocketConnectedEventListener(new SocketConnectedEventListener(){
-			public void socketConnected(SocketConnectedEvent evt){
-				getLogger().info("Client - Connected to server!");
-				getLogger().info("Client - Sending message to server.");
-				
-				Bukkit.getScheduler().runTaskTimer(Main.this, () -> {
-					try {
-						client.sendMessage(getPlaceholdersString());
-					} catch (Exception e) {
-						getLogger().warning("Cannot send information to server. Is it down?");
-						getLogger().warning(e.getMessage());
-					}
-				}, 20, 20);
-			}
-		});
-		
-		client.getHandler().getMessage().addMessageReceivedEventListener(new MessageReceivedEventListener(){
-			public void messageReceived(MessageReceivedEvent evt){
-				getLogger().info("Client - I got the following message: " + evt.getMessage());
-				try { 
-					client.disconnect();
-				} catch (IOException e) {
-					e.printStackTrace();
+			client = new Client(ip, port);
+			
+			client.getHandler().getConnected().addSocketConnectedEventListener(new SocketConnectedEventListener(){
+				public void socketConnected(SocketConnectedEvent evt){
+					getLogger().info("Client - Connected to server!");
+					getLogger().info("Client - Sending message to server.");
+					
+					Bukkit.getScheduler().runTaskTimer(Main.this, () -> {
+						try {
+							client.sendMessage(getPlaceholdersString());
+						} catch (Exception e) {
+							getLogger().warning("Cannot send information to server. Is it down?");
+							getLogger().warning(e.getMessage());
+						}
+					}, 20, 20);
 				}
-			}
-		});
+			});
+			
+			client.getHandler().getMessage().addMessageReceivedEventListener(new MessageReceivedEventListener(){
+				public void messageReceived(MessageReceivedEvent evt){
+					getLogger().info("Client - I got the following message: " + evt.getMessage());
+					try { 
+						client.disconnect();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			});
+			
+			client.getHandler().getDisconnected().addSocketDisconnectedEventListener(new SocketDisconnectedEventListener(){
+				public void socketDisconnected(SocketDisconnectedEvent evt){
+					getLogger().info("Client - Disconnected");
+				}
+			});
 		
-		client.getHandler().getDisconnected().addSocketDisconnectedEventListener(new SocketDisconnectedEventListener(){
-			public void socketDisconnected(SocketDisconnectedEvent evt){
-				getLogger().info("Client - Disconnected");
-			}
+			connect();
 		});
-		
-		connect();
 	}
 	
 	private void connect() {
