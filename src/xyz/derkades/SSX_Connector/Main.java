@@ -71,7 +71,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		Bukkit.getServer().getScheduler().cancelTasks(this);
 		
 		try {
-			client.disconnect();
+			if (client != null && client.isConnected()) client.disconnect();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
