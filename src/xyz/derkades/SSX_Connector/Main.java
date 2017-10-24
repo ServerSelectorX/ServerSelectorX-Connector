@@ -132,6 +132,8 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		addonsFolder.mkdirs();
 		
 		for (File addonFolder : addonsFolder.listFiles()) {
+			getLogger().info("[debug] scanned " + addonFolder.getAbsolutePath());
+			
 			if (!addonFolder.isDirectory()) {
 				getLogger().warning("Non-addon file detected in addons folder: " + addonFolder.getName());
 				continue;
