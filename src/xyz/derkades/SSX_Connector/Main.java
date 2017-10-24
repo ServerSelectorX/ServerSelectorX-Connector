@@ -43,7 +43,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		this.addons = loadAddons();
 		
 		Bukkit.getScheduler().runTaskTimerAsynchronously(Main.this, () -> {
-			if (client == null) {
+			if (client == null || !client.isConnected()) {
 				try {
 					initClient();
 					
