@@ -51,7 +51,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 					initClient();
 					
 				} catch (Exception e) {
-					getLogger().warning("Couldn't connect to server");
+					getLogger().warning("Can't connect to server");
 					getLogger().warning(e.getMessage());
 					return;
 				}
