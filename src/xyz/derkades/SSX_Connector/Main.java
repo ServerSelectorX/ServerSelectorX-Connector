@@ -117,7 +117,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		
 		getLogger().info("Loading addons...");
 		
-		File addonsFolder = new File(getDataFolder() + "/addons");
+		File addonsFolder = new File(getDataFolder() + "addons");
 		
 		addonsFolder.mkdirs();
 		
