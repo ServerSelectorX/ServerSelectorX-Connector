@@ -64,6 +64,8 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			}
 		});
 		
+		connect();
+		
 		/*getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
 		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
 		
@@ -82,6 +84,18 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 				e.printStackTrace();
 			}
 		}, 20, 20);*/
+	}
+	
+	private void connect() {
+		try {
+			client.connect();
+			getLogger().info("Connected!");
+		} catch (Exception e) {
+			getLogger().info("Couldn't connect to server, retrying in 5 seconds.");
+			Bukkit.getScheduler().runTaskLater(this, () -> {
+				connect();
+			}, 5* 20);
+		}
 	}
 	
 	/*private void askBungeeForServerName() {
