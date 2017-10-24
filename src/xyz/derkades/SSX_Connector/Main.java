@@ -81,25 +81,6 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		});
 		
 		connect();
-		
-		/*getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
-		getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
-		
-		askBungeeForServerName();
-		
-		Bukkit.getScheduler().runTaskTimer(this, () -> {
-			if (serverName == null) {
-				getLogger().warning("Server name not yet recieved from BungeeCord");
-				askBungeeForServerName();
-				return;
-			}
-			
-			try {
-				sendPlaceholdersToBungee();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}, 20, 20);*/
 	}
 	
 	private void connect() {
@@ -128,30 +109,10 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		return gson.toJson(placeholders);
 	}
 	
-	/*private void askBungeeForServerName() {
-		//Send request for server name to bungee, received down below.
-		ByteArrayDataOutput out = ByteStreams.newDataOutput();
-		out.writeUTF("GetServer");
-		//Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); // We don't care about the player
-		Bukkit.getServer().sendPluginMessage(this, "BungeeCord", out.toByteArray());
-	}
-	
-	@Override
-	public void onPluginMessageReceived(String channel, Player player, byte[] message) {
-		if (!channel.equals("BungeeCord")) {
-			return;
-		}
-		
-		ByteArrayDataInput in = ByteStreams.newDataInput(message);
-		String subchannel = in.readUTF();
-		if (subchannel.equals("GetServer")) {
-			String serverName = in.readUTF();
-			this.serverName = serverName;
-		}
-	}*/
-	
 	private List<Addon> loadAddons() {
 		List<Addon> addons = new ArrayList<>();
+		
+		getLogger().info("Loading addons...");
 		
 		File addonsFolder = new File(getDataFolder() + "/addons");
 		
@@ -216,32 +177,5 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		
 		return addons;
 	}
-	
-	/*private void sendPlaceholdersToBungee() throws IOException {
-		for (Addon addon : addons) {
-			for (Map.Entry<String, String> entry : addon.getPlaceholders().entrySet()) {
-				sendToBungee(entry.getKey(), entry.getValue());
-			}
-		}
-	}*/
-	
-	//private void sendToBungee(String placeholder, String output) throws IOException {
-		//Player player = Iterables.getFirst(Bukkit.getOnlinePlayers(), null); //We don't care about which player the message is sent from
-		/*ByteArrayOutputStream baos = new ByteArrayOutputStream(); 
-		DataOutputStream dos = new DataOutputStream(baos);			    
-		dos.writeUTF("Forward");
-	    dos.writeUTF("ALL");
-	    dos.writeUTF("ServerSelectorX-Placeholder");
-
-	    ByteArrayOutputStream msgbytes = new ByteArrayOutputStream();
-	    DataOutputStream out = new DataOutputStream(msgbytes);
-	    out.writeUTF(serverName);
-	    out.writeUTF(placeholder);
-	    out.writeUTF(output);
-
-	    dos.writeShort(msgbytes.toByteArray().length);
-	    dos.write(msgbytes.toByteArray());
-	    Bukkit.getServer().sendPluginMessage(this, "BungeeCord", baos.toByteArray());*/
-	//}
 
 }
