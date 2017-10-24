@@ -131,11 +131,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		
 		addonsFolder.mkdirs();
 		
-		getLogger().info("[debug] " + addonsFolder.getAbsolutePath());
-		
-		for (File addonFolder : addonsFolder.listFiles()) {
-			getLogger().info("[debug] scanned" + addonFolder.getAbsolutePath());
-			
+		for (File addonFolder : addonsFolder.listFiles()) {			
 			if (!addonFolder.isDirectory()) {
 				getLogger().warning("Non-addon file detected in addons folder: " + addonFolder.getName());
 				continue;
@@ -180,7 +176,6 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			AddonClass addonClass;
 			
 			try (URLClassLoader loader = new URLClassLoader(new URL[]{addonFolder.toURI().toURL()}, this.getClassLoader())){
-				getLogger().info("[debug] loading " + loader.getURLs()[0].toString());
 				Class<?> clazz = loader.loadClass("code");
 				addonClass = (AddonClass) clazz.newInstance();
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
