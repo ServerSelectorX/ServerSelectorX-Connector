@@ -39,6 +39,8 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	public void onEnable() {
 		plugin = this;
 		
+		super.saveDefaultConfig();
+		
 		gson = new Gson();
 		
 		this.addons = loadAddons();
