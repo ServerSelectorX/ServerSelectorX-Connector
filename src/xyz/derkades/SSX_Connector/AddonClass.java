@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 
 public abstract class AddonClass implements Listener {
 	
-	FileConfiguration config;
+	protected FileConfiguration config;
 	
 	public abstract Map<String, String> getPlaceholders();
 	
