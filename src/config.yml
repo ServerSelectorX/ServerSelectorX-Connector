@@ -1,7 +1,4 @@
-# The ip and port of your hub server.
-# The port can be configured in 'server.yml' in your ServerSelectorX folder
+# The ip of your hub server.
 ip: 'localhost'
+# Set the port in 'pingers.yml' in your ServerSelectorX folder
 port: 9876
-
-# This server's name in BungeeCord. It is very important that you enter this correctly!
-server-name: 'kitpvp'

@@ -105,8 +105,6 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	private String getPlaceholdersString() {
 		Map<String, String> placeholders = new HashMap<>();
 		
-		placeholders.put("server", getConfig().getString("server-name"));
-		
 		for (Addon addon : addons) {
 			placeholders.putAll(addon.getPlaceholders());
 		}
