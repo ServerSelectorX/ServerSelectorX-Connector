@@ -1,6 +1,6 @@
 name: SSX-Connector
 main: xyz.derkades.SSX_Connector.Main
-version: beta
+version: '@project.version@'
 author: Derkades
 description: 'Addon plugin for ServerSelectorX'
 
