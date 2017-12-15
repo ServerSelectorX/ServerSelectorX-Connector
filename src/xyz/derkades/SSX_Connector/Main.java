@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
@@ -44,6 +47,21 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		gson = new Gson();
 		
 		this.addons = loadAddons();
+		
+		getCommand("ssxc").setExecutor(new CommandExecutor() {
+
+			@Override
+			public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+				if (args.length == 1 && args[0].equals("reload")) {
+					Main.this.reloadConfig();
+					sender.sendMessage("The configuration file has been reload");
+					return true;
+				} else {
+					return false;
+				}
+			}
+			
+		});
 		
 		sender = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.this, () -> {
 			if (client == null || !client.isConnected()) {
