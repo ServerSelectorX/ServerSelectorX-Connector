@@ -2,8 +2,11 @@ package xyz.derkades.SSX_Connector;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -20,11 +23,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import com.google.gson.Gson;
-import com.mitch528.sockets.Sockets.Client;
-import com.mitch528.sockets.events.SocketConnectedEvent;
-import com.mitch528.sockets.events.SocketConnectedEventListener;
-import com.mitch528.sockets.events.SocketDisconnectedEvent;
-import com.mitch528.sockets.events.SocketDisconnectedEventListener;
 
 public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	
@@ -32,7 +30,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	
 	private List<Addon> addons;
 	
-	private Client client;
+	//private Client client;
 	
 	private Gson gson;
 	
@@ -63,7 +61,22 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			
 		});
 		
-		sender = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.this, () -> {
+		final String ip = getConfig().getString("ip");
+		final int port = getConfig().getInt("port");
+		final String key = getConfig().getString("key");
+		String addressString = String.format("http://%s:%s", ip, port);
+		
+		sender = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
+			try {
+				HttpURLConnection connection = (HttpURLConnection) new URLConnection(new Url());
+			} catch (MalformedURLException e) {
+				
+			} catch (IOException e) {
+				
+			}
+		}, 5*20, 5*20);
+		
+		/*sender = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.this, () -> {
 			if (client == null || !client.isConnected()) {
 				try {
 					initClient();
@@ -82,9 +95,15 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 				getLogger().warning(e.getMessage());
 				client = null;
 			}
-		}, 5*20, 5*20);
+		}, 5*20, 5*20);*/
 	}
 	
+	@Override
+	public void onDisable() {
+		sender.cancel();
+	}
+	
+	/*
 	@Override
 	public void onDisable() {
 		sender.cancel();
@@ -95,8 +114,9 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
+	/*
 	private void initClient() throws Exception {
 		String ip = getConfig().getString("ip");
 		int port = getConfig().getInt("port");
@@ -118,7 +138,7 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		});
 
 		client.connect();
-	}
+	}*/
 	
 	private String getPlaceholdersString() {
 		Map<String, String> placeholders = new HashMap<>();
