@@ -5,4 +5,4 @@ ip: 'localhost'
 port: 9876
 
 # Set the key in 'servers.yml' in your ServerSelectorX folder
-key: 'none'
+key: 'put your key here'
