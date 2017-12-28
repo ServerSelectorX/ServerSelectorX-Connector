@@ -4,5 +4,5 @@ ip: 'localhost'
 # Set the port in 'config.yml' in your ServerSelectorX folder
 port: 9876
 
-# Set the key in 'pingers.yml' in your ServerSelectorX folder
+# Set the key in 'servers.yml' in your ServerSelectorX folder
 key: 'none'
