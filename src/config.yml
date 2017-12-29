@@ -2,7 +2,7 @@
 ip: 'localhost'
 
 # Set the port in 'config.yml' in your ServerSelectorX folder
-port: 9876
+port: 9782
 
 # Set the key in 'servers.yml' in your ServerSelectorX folder
 key: 'put your key here'
