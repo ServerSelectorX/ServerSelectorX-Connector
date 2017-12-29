@@ -99,70 +99,13 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 				getLogger().warning(e.getMessage());
 			}
 		}, 5*20, 5*20);
-		
-		/*sender = Bukkit.getScheduler().runTaskTimerAsynchronously(Main.this, () -> {
-			if (client == null || !client.isConnected()) {
-				try {
-					initClient();
-					
-				} catch (Exception e) {
-					getLogger().warning("Can't connect to server");
-					getLogger().warning(e.getMessage());
-					return;
-				}
-			}
-			
-			try {
-				client.sendMessage(getPlaceholdersString());
-			} catch (Exception e) {
-				getLogger().warning("Cannot send information to server. Is it down?");
-				getLogger().warning(e.getMessage());
-				client = null;
-			}
-		}, 5*20, 5*20);*/
+
 	}
 	
 	@Override
 	public void onDisable() {
 		sender.cancel();
 	}
-	
-	/*
-	@Override
-	public void onDisable() {
-		sender.cancel();
-		Bukkit.getServer().getScheduler().cancelTasks(this);
-		
-		try {
-			if (client != null && client.isConnected()) client.disconnect();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
-	
-	/*
-	private void initClient() throws Exception {
-		String ip = getConfig().getString("ip");
-		int port = getConfig().getInt("port");
-		
-		if (client != null && client.isConnected()) client.disconnect();
-			
-		client = new Client(ip, port);
-
-		client.getHandler().getConnected().addSocketConnectedEventListener(new SocketConnectedEventListener() {
-			public void socketConnected(SocketConnectedEvent evt) {
-				getLogger().info(String.format("Connection with server (%s:%s) has been established!", ip, port));
-			}
-		});
-
-		client.getHandler().getDisconnected().addSocketDisconnectedEventListener(new SocketDisconnectedEventListener() {
-			public void socketDisconnected(SocketDisconnectedEvent evt) {
-				getLogger().info("Disconnected from server");
-			}
-		});
-
-		client.connect();
-	}*/
 	
 	private String getPlaceholdersString() {
 		Map<String, String> placeholders = new HashMap<>();
