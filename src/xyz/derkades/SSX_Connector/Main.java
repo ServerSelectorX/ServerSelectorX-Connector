@@ -63,16 +63,16 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			
 		});
 		
-		final String ip = getConfig().getString("ip");
-		final int port = getConfig().getInt("port");
-		final String addressString = String.format("http://%s:%s", ip, port);
-		
-		final String key = getConfig().getString("key");
-		final String placeholders = getPlaceholdersString();
-		final String parameters = String.format("key=%s&data=%s", encode(key), encode(placeholders));
-		
 		sender = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
 			try {
+				final String ip = getConfig().getString("ip");
+				final int port = getConfig().getInt("port");
+				final String addressString = String.format("http://%s:%s", ip, port);
+				
+				final String key = getConfig().getString("key");
+				final String placeholders = getPlaceholdersString();
+				final String parameters = String.format("key=%s&data=%s", encode(key), encode(placeholders));
+				
 				HttpURLConnection connection = (HttpURLConnection) new URL(addressString).openConnection();
 				connection.setRequestMethod("POST");
 				connection.setRequestProperty("Content-Length", parameters.length() + "");
