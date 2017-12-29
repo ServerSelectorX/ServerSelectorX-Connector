@@ -11,8 +11,6 @@ public abstract class AddonClass implements Listener {
 	
 	public abstract Map<String, String> getPlaceholders();
 	
-	public abstract Map<String, String> getConfigDefaults();
-	
 	public void onLoad() {
 		
 	}

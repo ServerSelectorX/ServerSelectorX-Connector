@@ -1,6 +1,7 @@
 package xyz.derkades.SSX_Connector;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
@@ -55,20 +56,8 @@ public class Addon {
 	}
 	
 	void loadConfig() {		
-		if (addonClass.getConfigDefaults() == null) {
-			return;
-		}
-		
 		File file = new File(directory, "config.yml");
-		if (!file.exists()) {
-			addonClass.config = new YamlConfiguration();
-			addonClass.config.addDefault("info", "If you don't understand how to configure this addon, maybe the developer has put instructions in info.yml");
-			for (Map.Entry<String, String> entry : addonClass.getConfigDefaults().entrySet()) {
-				addonClass.config.addDefault(entry.getKey(), entry.getValue());
-			}	
-		} else {
-			addonClass.config = YamlConfiguration.loadConfiguration(file);
-		}
+		addonClass.config = YamlConfiguration.loadConfiguration(file);
 	}
 
 }
