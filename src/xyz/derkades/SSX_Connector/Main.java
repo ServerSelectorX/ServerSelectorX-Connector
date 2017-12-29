@@ -92,9 +92,9 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 					getLogger().severe("Parameters: " + parameters);
 				}
 			} catch (MalformedURLException e) {
-				
+				e.printStackTrace();
 			} catch (IOException e) {
-				
+				e.printStackTrace();
 			}
 		}, 5*20, 5*20);
 		
