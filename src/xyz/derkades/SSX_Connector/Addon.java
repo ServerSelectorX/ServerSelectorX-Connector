@@ -1,7 +1,6 @@
 package xyz.derkades.SSX_Connector;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Map;
 
 import org.bukkit.Bukkit;

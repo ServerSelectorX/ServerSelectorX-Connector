@@ -64,42 +64,45 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 		});
 		
 		sender = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
-			try {
-				final String ip = getConfig().getString("ip");
-				final int port = getConfig().getInt("port");
-				final String addressString = String.format("http://%s:%s", ip, port);
-				
-				final String key = getConfig().getString("key");
-				final String placeholders = getPlaceholdersString();
-				final String parameters = String.format("key=%s&data=%s", encode(key), encode(placeholders));
-				
-				HttpURLConnection connection = (HttpURLConnection) new URL(addressString).openConnection();
-				connection.setRequestMethod("POST");
-				connection.setRequestProperty("Content-Length", parameters.length() + "");
-				connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-				connection.setDoOutput(true);
-				connection.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
-				
-				DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-				outputStream.writeBytes(parameters);
-				
-				if (connection.getResponseCode() == 401) {
-					getLogger().severe("The provided key is invalid (" + key + ")");
-				}
-				
-				if (connection.getResponseCode() == 400) {
-					getLogger().severe("An error occured. Please report this error.");
-					getLogger().severe("Parameters: " + parameters);
-				}
-			} catch (MalformedURLException e) {
-				getLogger().severe("Could not parse URL, is it valid?");
-				getLogger().severe(e.getMessage());
-			} catch (IOException e) {
-				getLogger().warning("Cannot send information to server. Is it down?");
-				getLogger().warning(e.getMessage());
+			for (String address : getConfig().getStringList("addresses")) {
+				sendToServer(address, getPlaceholdersString());
 			}
 		}, 5*20, 5*20);
 
+	}
+	
+	private void sendToServer(String address, String placeholders) {
+		try {
+			address = "http://" + address;
+			
+			final String key = getConfig().getString("key");
+			final String parameters = String.format("key=%s&data=%s", encode(key), encode(placeholders));
+			
+			HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
+			connection.setRequestMethod("POST");
+			connection.setRequestProperty("Content-Length", parameters.length() + "");
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+			connection.setDoOutput(true);
+			connection.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
+			
+			DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+			outputStream.writeBytes(parameters);
+			
+			if (connection.getResponseCode() == 401) {
+				getLogger().severe("The provided key is invalid (" + key + ")");
+			}
+			
+			if (connection.getResponseCode() == 400) {
+				getLogger().severe("An error occured. Please report this error.");
+				getLogger().severe("Parameters: " + parameters);
+			}
+		} catch (MalformedURLException e) {
+			getLogger().severe("Could not parse URL, is it valid?");
+			getLogger().severe(e.getMessage());
+		} catch (IOException e) {
+			getLogger().warning("Cannot send information to server. Is it down?");
+			getLogger().warning(e.getMessage());
+		}
 	}
 	
 	@Override
