@@ -5,3 +5,8 @@ addresses:
 
 # Set the key in 'servers.yml' in your ServerSelectorX folder
 key: 'put your key here'
+
+# How often the connector plugin sends placeholders
+# Use values 1-6 (3 means once every 3 seconds)
+# You need to restart your server completely after changing this, /ssxc reload is not enough.
+send-interval: 4

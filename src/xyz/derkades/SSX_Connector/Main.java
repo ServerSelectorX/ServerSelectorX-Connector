@@ -32,8 +32,6 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 	
 	private List<Addon> addons;
 	
-	//private Client client;
-	
 	private Gson gson;
 	
 	private BukkitTask sender;
@@ -63,11 +61,13 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			
 		});
 		
+		int sendIntervalSeconds = getConfig().getInt("send-interval", 4);
+		
 		sender = Bukkit.getScheduler().runTaskTimerAsynchronously(this, () -> {
 			for (String address : getConfig().getStringList("addresses")) {
 				sendToServer(address, getPlaceholdersString());
 			}
-		}, 5*20, 5*20);
+		}, sendIntervalSeconds*20, sendIntervalSeconds*20);
 
 	}
 	
