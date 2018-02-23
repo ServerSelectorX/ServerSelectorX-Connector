@@ -100,8 +100,10 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			getLogger().severe("Could not parse URL, is it valid?");
 			getLogger().severe(e.getMessage());
 		} catch (IOException e) {
-			getLogger().warning("Cannot send information to server. Is it down?");
-			getLogger().warning(e.getMessage());
+			if (getConfig().getBoolean("log-ping-fail", true)) {
+				getLogger().warning("Cannot send information to server. Is it down?");
+				getLogger().warning(e.getMessage());
+			}
 		}
 	}
 	

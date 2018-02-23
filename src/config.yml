@@ -10,3 +10,5 @@ key: 'put your key here'
 # Use values 1-6 (3 means once every 3 seconds)
 # You need to restart your server completely after changing this, /ssxc reload is not enough.
 send-interval: 4
+
+log-ping-fail: true
