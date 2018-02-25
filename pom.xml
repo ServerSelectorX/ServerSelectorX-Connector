@@ -53,10 +53,6 @@
 					<minimizeJar>true</minimizeJar>
 					
 					<relocations>
-						<!--<relocation>
-							<pattern>com.mitch528.sockets</pattern>
-							<shadedPattern>xyz.derkades.serverselectorx.ext.sockets</shadedPattern>
-						</relocation>-->
 						<relocation>
 							<pattern>org.bstats.bukkit</pattern>
 							<shadedPattern>xyz.derkades.SSX_Connector.ext.bstats</shadedPattern>
@@ -65,12 +61,9 @@
 
 					<artifactSet>
 						<excludes>
-							<!--<exclude>commons-io:commons-io</exclude>-->
 							<exclude>org.apache.commons:commons-lang3</exclude>
 							<exclude>org.bukkit:bukkit</exclude>
 							<exclude>org.yaml:snakeyaml</exclude>
-							<!--<exclude>com.google.code.gson:gson</exclude>
-							<exclude>com.googlecode.json-simple:json-simple</exclude>-->
 							<exclude>commons-lang:commons-lang</exclude>
 						</excludes>
 					</artifactSet>
