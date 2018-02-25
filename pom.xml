@@ -53,9 +53,13 @@
 					<minimizeJar>true</minimizeJar>
 					
 					<relocations>
-						<relocation>
+						<!--<relocation>
 							<pattern>com.mitch528.sockets</pattern>
 							<shadedPattern>xyz.derkades.serverselectorx.ext.sockets</shadedPattern>
+						</relocation>-->
+						<relocation>
+							<pattern>org.bstats.bukkit</pattern>
+							<shadedPattern>xyz.derkades.SSX_Connector.ext.bstats</shadedPattern>
 						</relocation>
 					</relocations>
 
@@ -98,6 +102,12 @@
 			<version>2.8.2</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<dependency>
+			<groupId>org.bstats</groupId>
+			<artifactId>bstats-bukkit</artifactId>
+			<version>1.2</version>
+		</dependency>
 
 	</dependencies>
 
@@ -111,6 +121,11 @@
 		<repository>
 			<id>derkades</id>
 			<url>https://derkades.xyz/maven</url>
+		</repository>
+		
+		<repository>
+			<id>bstats-repo</id>
+			<url>http://repo.bstats.org/content/repositories/releases/</url>
 		</repository>
 
 		<repository>

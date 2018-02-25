@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -26,7 +27,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.google.gson.Gson;
 
-public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
+public class Main extends JavaPlugin {
 	
 	public static Main plugin;
 	
@@ -69,6 +70,16 @@ public class Main extends JavaPlugin /*implements PluginMessageListener*/ {
 			}
 		}, sendIntervalSeconds*20, sendIntervalSeconds*20);
 
+		
+		final Metrics metrics = new Metrics(this);
+		
+		metrics.addCustomChart(new Metrics.SimplePie("data_send_interval", () -> {
+			return sendIntervalSeconds + "";
+		}));
+		
+		metrics.addCustomChart(new Metrics.SimplePie("hub_servers", () -> {
+			return getConfig().getStringList("addresses").size() + "";
+		}));
 	}
 	
 	private void sendToServer(String address, String placeholders) {
