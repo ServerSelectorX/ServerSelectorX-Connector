@@ -125,7 +125,7 @@ public class Main extends JavaPlugin {
 	
 	private String getPlaceholdersString() {
 		Map<String, String> placeholders = new HashMap<>();
-		placeholders.put("online", Bukkit.getOnlinePlayers() + "");
+		placeholders.put("online", Bukkit.getOnlinePlayers().size() + "");
 		placeholders.put("max", Bukkit.getMaxPlayers() + "");
 		
 		for (Addon addon : addons) {
