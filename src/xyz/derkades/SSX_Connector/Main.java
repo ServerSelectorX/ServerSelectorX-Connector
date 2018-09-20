@@ -92,9 +92,7 @@ public class Main extends JavaPlugin {
 			HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 			connection.setRequestMethod("POST");
 			connection.setRequestProperty("Content-Length", parameters.length() + "");
-			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 			connection.setDoOutput(true);
-			connection.addRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)");
 			
 			DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
 			outputStream.writeBytes(parameters);
