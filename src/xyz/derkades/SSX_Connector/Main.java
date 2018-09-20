@@ -144,6 +144,7 @@ public class Main extends JavaPlugin {
 		
 		addonsFolder.mkdirs();
 		
+		loadaddons:
 		for (File addonFolder : addonsFolder.listFiles()) {			
 			if (!addonFolder.isDirectory()) {
 				getLogger().warning("Non-addon file detected in addons folder: " + addonFolder.getName());
@@ -174,7 +175,7 @@ public class Main extends JavaPlugin {
 					Plugin plugin = Bukkit.getPluginManager().getPlugin(requiredPlugin);
 					if (plugin == null) {
 						getLogger().warning("Addon with name " + addonFolder.getName() + " could not be loaded, because it requires " + requiredPlugin + " which you do not have installed.");
-						continue;
+						continue loadaddons;
 					}
 				}
 			}
