@@ -1,4 +1,4 @@
-package xyz.derkades.SSX_Connector;
+package xyz.derkades.ssx_connector;
 
 import java.io.File;
 import java.util.UUID;
