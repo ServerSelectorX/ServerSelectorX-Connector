@@ -1,62 +1,54 @@
 package xyz.derkades.SSX_Connector;
 
 import java.io.File;
-import java.util.Map;
+import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
 
-public class Addon {
-	
-	private AddonClass addonClass;
-	private File directory;
-	private String name;
-	private String description;
-	private String author;
-	private String version;
-	private String license;
-	
-	public Addon(Main plugin, AddonClass addonClass, File directory, String name, String description, String author, String version, String license){
-		this.addonClass = addonClass;
-		this.directory = directory;
-		this.name = name;
-		this.description = description;
-		this.author = author;
-		this.version = version;
-		this.license = license;
-		
-		loadConfig();
-		Bukkit.getPluginManager().registerEvents(addonClass, plugin);
-		addonClass.onLoad();
+public abstract class Addon implements Listener {
+
+	protected final JavaPlugin plugin = Main.instance;
+	protected FileConfiguration config;
+
+	public abstract String getName();
+
+	public abstract String getDescription();
+
+	public abstract String getAuthor();
+
+	public abstract String getVersion();
+
+	public abstract String getLicense();
+
+	public abstract void onLoad();
+
+	protected void registerListeners() {
+		Bukkit.getPluginManager().registerEvents(this, this.plugin);
 	}
-	
-	String getName() {
-		return name;
+
+	protected void addPlaceholder(final String key, final Supplier<String> placeholder) {
+		Main.placeholders.put(key, placeholder);
 	}
-	
-	String getDescription() {
-		return description;
+
+	protected void addPlayerPlaceholder(final String key, final BiFunction<UUID, String, String> placeholder) {
+		Main.playerPlaceholders.put(key, placeholder);
 	}
-	
-	String getAuthor() {
-		return author;
+
+	void load() {
+		this.reloadConfig();
+		this.onLoad();
 	}
-	
-	String getVersion() {
-		return version;
-	}
-	
-	String getLicense() {
-		return license;
-	}
-	
-	Map<String, String> getPlaceholders(){
-		return addonClass.getPlaceholders();
-	}
-	
-	void loadConfig() {		
-		File file = new File(directory, "config.yml");
-		addonClass.config = YamlConfiguration.loadConfiguration(file);
+
+	void reloadConfig() {
+		final File file = new File(Main.instance.addonsFolder, "config.yml");
+		if (file.exists()) {
+			this.config = YamlConfiguration.loadConfiguration(file);
+		}
 	}
 
 }

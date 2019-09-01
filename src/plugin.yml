@@ -4,13 +4,6 @@ version: '@project.version@'
 author: Derkades
 description: 'Addon plugin for ServerSelectorX'
 
-softdepend:
- - PlayUHC
- - Essentials
- - Bedwars1058
- - BedwarsRel
- - Vault
-
 commands:
   ssxc:
     aliases: [serverselectorxconnector, ssxconnector]

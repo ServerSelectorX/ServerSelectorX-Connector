@@ -3,12 +3,14 @@
 addresses:
 - 'localhost:9782'
 
-# Set the key in 'servers.yml' in your ServerSelectorX folder
-key: 'put your key here'
+# Set this to the name of this server EXACTLY as specified in the bungeecord config.
+server-name: ''
 
-# How often the connector plugin sends placeholders
-# Use values 1-6 (3 means once every 3 seconds)
+# How often the connector plugin sends placeholders (4 means once every 4 seconds)
 # You need to restart your server completely after changing this, /ssxc reload is not enough.
 send-interval: 4
 
 log-ping-fail: true
+
+# don't touch this option unless you know you need to
+password: "a"
