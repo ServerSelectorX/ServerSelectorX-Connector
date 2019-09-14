@@ -2,6 +2,7 @@ package xyz.derkades.ssx_connector;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -87,8 +88,9 @@ public class Main extends JavaPlugin {
 
 			try (URLClassLoader loader = new URLClassLoader(new URL[]{addonFile.toURI().toURL()}, this.getClassLoader())){
 				final Class<?> clazz = loader.loadClass(addonFile.getName().replace(".class", ""));
-				addon = (Addon) clazz.newInstance();
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException e) {
+				addon = (Addon) clazz.getConstructor().newInstance();
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException | 
+					IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 				continue;
 			}

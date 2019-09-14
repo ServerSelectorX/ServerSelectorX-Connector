@@ -38,7 +38,7 @@ public class RetrievePlayersTask implements Runnable {
 				}
 
 				if (connection.getResponseCode() == 400) {
-					logger.severe("An error occured. Please report this error.");
+					logger.severe("An error occured (http bad request). Please report this error.");
 					logger.severe(address);
 					continue;
 				}

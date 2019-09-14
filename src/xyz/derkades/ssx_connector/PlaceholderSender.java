@@ -9,7 +9,6 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -23,16 +22,28 @@ public class PlaceholderSender implements Runnable {
 		final FileConfiguration config = Main.instance.getConfig();
 		final Logger logger = Main.instance.getLogger();
 
-		final Map<UUID, Map<String, String>> placeholders = new HashMap<>();
+//		final Map<String, Map<String, String>> placeholders = new HashMap<>();
+//
+//		final Map<String, String> globalPlaceholders = new HashMap<>();
+//		Main.placeholders.forEach((k, v) -> globalPlaceholders.put(k, v.get()));
+//		placeholders.put("global", globalPlaceholders);
+//
+//		Main.players.forEach((uuid, name) -> {
+//			final Map<String, String> playerPlaceholders = new HashMap<>();
+//			Main.playerPlaceholders.forEach((k, v) -> playerPlaceholders.put(k, v.apply(uuid, name)));
+//			placeholders.put(uuid.toString(), playerPlaceholders);
+//		});
 
-		final Map<String, String> globalPlaceholders = new HashMap<>();
-		Main.placeholders.forEach((k, v) -> globalPlaceholders.put(k, v.get()));
-		placeholders.put(null, globalPlaceholders);
+		final Map<String, Object> placeholders = new HashMap<>();
 
-		Main.players.forEach((uuid, name) -> {
-			final Map<String, String> playerPlaceholders = new HashMap<>();
-			Main.playerPlaceholders.forEach((k, v) -> playerPlaceholders.put(k, v.apply(uuid, name)));
-			placeholders.put(uuid, playerPlaceholders);
+		Main.placeholders.forEach((k, v) -> placeholders.put(k, v.get()));
+
+		Main.playerPlaceholders.forEach((k, v) -> {
+			final Map<String, String> playerValues = new HashMap<>();
+			Main.players.forEach((uuid, name) -> {
+				playerValues.put(uuid.toString(), v.apply(uuid, name));
+			});
+			placeholders.put(k, playerValues);
 		});
 
 		final String json = new Gson().toJson(placeholders).toString();
