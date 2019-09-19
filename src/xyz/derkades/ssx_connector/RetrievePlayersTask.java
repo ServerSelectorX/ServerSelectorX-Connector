@@ -27,18 +27,18 @@ public class RetrievePlayersTask implements Runnable {
 		for (String address : config.getStringList("addresses")) {
 			try {
 				final String password = this.encode(config.getString("password"));
-				address = "http://" + address + "?password=" + password;
+				address = "http://" + address + "/players?password=" + password;
 
 				final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 				//connection.setRequestProperty("Content-Length", parameters.length() + "");
 
 				if (connection.getResponseCode() == 401) {
-					logger.severe("The provided password is invalid (" + password + ")");
+					logger.severe("[PlayerRetriever] The provided password is invalid (" + password + ")");
 					continue;
 				}
 
 				if (connection.getResponseCode() == 400) {
-					logger.severe("An error occured (http bad request). Please report this error.");
+					logger.severe("[PlayerRetriever] An error occured (http bad request). Please report this error.");
 					logger.severe(address);
 					continue;
 				}
@@ -60,10 +60,10 @@ public class RetrievePlayersTask implements Runnable {
 
 				inputStream.close();
 			} catch (final MalformedURLException e) {
-				logger.severe("Could not parse URL, is it valid? (" + address + ")");
+				logger.severe("[PlayerRetriever] Could not parse URL, is it valid? (" + address + ")");
 			} catch (final IOException e) {
 				if (config.getBoolean("log-ping-fail", true)) {
-					logger.warning("Cannot send information to server. Is it down? " + e.getMessage());
+					logger.warning("[PlayerRetriever] Cannot send information to server. Is it down? " + e.getMessage());
 				}
 			}
 		}

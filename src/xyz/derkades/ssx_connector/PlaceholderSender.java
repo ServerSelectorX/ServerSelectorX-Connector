@@ -22,18 +22,6 @@ public class PlaceholderSender implements Runnable {
 		final FileConfiguration config = Main.instance.getConfig();
 		final Logger logger = Main.instance.getLogger();
 
-//		final Map<String, Map<String, String>> placeholders = new HashMap<>();
-//
-//		final Map<String, String> globalPlaceholders = new HashMap<>();
-//		Main.placeholders.forEach((k, v) -> globalPlaceholders.put(k, v.get()));
-//		placeholders.put("global", globalPlaceholders);
-//
-//		Main.players.forEach((uuid, name) -> {
-//			final Map<String, String> playerPlaceholders = new HashMap<>();
-//			Main.playerPlaceholders.forEach((k, v) -> playerPlaceholders.put(k, v.apply(uuid, name)));
-//			placeholders.put(uuid.toString(), playerPlaceholders);
-//		});
-
 		final Map<String, Object> placeholders = new HashMap<>();
 
 		Main.placeholders.forEach((k, v) -> placeholders.put(k, v.get()));
@@ -46,9 +34,12 @@ public class PlaceholderSender implements Runnable {
 			placeholders.put(k, playerValues);
 		});
 
+		System.out.println("test send 1");
+
 		final String json = new Gson().toJson(placeholders).toString();
 
 		for (String address : config.getStringList("addresses")) {
+			System.out.println("test send 2 " + address);
 			try {
 				address = "http://" + address;
 
@@ -65,21 +56,21 @@ public class PlaceholderSender implements Runnable {
 				outputStream.writeBytes(parameters);
 
 				if (connection.getResponseCode() == 401) {
-					logger.severe("The provided password is invalid (" + password + ")");
+					logger.severe("[PlaceholderSender] The provided password is invalid (" + password + ")");
 					return;
 				}
 
 				if (connection.getResponseCode() == 400) {
-					logger.severe("An error occured. Please report this error.");
-					logger.severe(address);
-					logger.severe("Parameters: " + parameters);
+					logger.severe("[PlaceholderSender] An error occured. Please report this error.");
+					logger.severe("[PlaceholderSender] " + address);
+					logger.severe("[PlaceholderSender] Parameters: " + parameters);
 					continue;
 				}
 			} catch (final MalformedURLException e) {
-				logger.severe("Could not parse URL, is it valid? (" + address + ")");
+				logger.severe("[PlaceholderSender] Could not parse URL, is it valid? (" + address + ")");
 			} catch (final IOException e) {
 				if (config.getBoolean("log-ping-fail", true)) {
-					logger.warning("Cannot send information to server. Is it down? " + e.getMessage());
+					logger.warning("[PlaceholderSender] Cannot send information to server. Is it down? " + e.getMessage());
 				}
 			}
 		}
