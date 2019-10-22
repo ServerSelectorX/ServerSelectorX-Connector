@@ -33,12 +33,14 @@ public class RetrievePlayersTask implements Runnable {
 				//connection.setRequestProperty("Content-Length", parameters.length() + "");
 
 				if (connection.getResponseCode() == 401) {
+					Main.lastPlayerRetrieveErrors.put(address, "Invalid password");
 					logger.severe("[PlayerRetriever] The provided password is invalid (" + password + ")");
 					continue;
 				}
 
 				if (connection.getResponseCode() == 400) {
-					logger.severe("[PlayerRetriever] An error occured (http bad request). Please report this error.");
+					Main.lastPlayerRetrieveErrors.put(address, "Error 400 (plugin bug)");
+					logger.severe("[PlayerRetriever] An error 400 occured. Please report this error.");
 					logger.severe(address);
 					continue;
 				}
@@ -59,12 +61,13 @@ public class RetrievePlayersTask implements Runnable {
 				map.forEach((k, v) -> Main.players.put(UUID.fromString(String.valueOf(k)), String.valueOf(v)));
 
 				inputStream.close();
+
+				Main.lastPlayerRetrieveErrors.put(address, null);
+				Main.lastPlayerRetrieveTimes.put(address, System.currentTimeMillis());
 			} catch (final MalformedURLException e) {
-				logger.severe("[PlayerRetriever] Could not parse URL, is it valid? (" + address + ")");
+				Main.lastPlayerRetrieveErrors.put(address, "[PlayerRetriever] Invalid URL: " + address);
 			} catch (final IOException e) {
-				if (config.getBoolean("log-ping-fail", true)) {
-					logger.warning("[PlayerRetriever] Cannot send information to server. Is it down? " + e.getMessage());
-				}
+				Main.lastPlayerRetrieveErrors.put(address, "[PlayerRetriever] IOException: " + e.getMessage());
 			}
 		}
 	}

@@ -34,12 +34,9 @@ public class PlaceholderSender implements Runnable {
 			placeholders.put(k, playerValues);
 		});
 
-		System.out.println("test send 1");
-
 		final String json = new Gson().toJson(placeholders).toString();
 
 		for (String address : config.getStringList("addresses")) {
-			System.out.println("test send 2 " + address);
 			try {
 				address = "http://" + address;
 
@@ -56,22 +53,25 @@ public class PlaceholderSender implements Runnable {
 				outputStream.writeBytes(parameters);
 
 				if (connection.getResponseCode() == 401) {
+					Main.lastPingErrors.put(address, "Invalid password");
 					logger.severe("[PlaceholderSender] The provided password is invalid (" + password + ")");
 					return;
 				}
 
 				if (connection.getResponseCode() == 400) {
-					logger.severe("[PlaceholderSender] An error occured. Please report this error.");
+					Main.lastPingErrors.put(address, "Error 400 (plugin bug)");
+					logger.severe("[PlaceholderSender] An error 400 occured. Please report this error.");
 					logger.severe("[PlaceholderSender] " + address);
 					logger.severe("[PlaceholderSender] Parameters: " + parameters);
 					continue;
 				}
+
+				Main.lastPingErrors.put(address, null);
+				Main.lastPingTimes.put(address, System.currentTimeMillis());
 			} catch (final MalformedURLException e) {
-				logger.severe("[PlaceholderSender] Could not parse URL, is it valid? (" + address + ")");
+				Main.lastPingErrors.put(address, "[PlaceholderSender] Invalid URL: " + address);
 			} catch (final IOException e) {
-				if (config.getBoolean("log-ping-fail", true)) {
-					logger.warning("[PlaceholderSender] Cannot send information to server. Is it down? " + e.getMessage());
-				}
+				Main.lastPingErrors.put(address, "[PlaceholderSender] IOException: " + e.getMessage());
 			}
 		}
 	}

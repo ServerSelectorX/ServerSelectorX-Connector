@@ -16,11 +16,18 @@ import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import net.md_5.bungee.api.ChatColor;
+
 public class Main extends JavaPlugin {
 
 	static final Map<UUID, String> players = new HashMap<>();
 	static final Map<String, BiFunction<UUID, String, String>> playerPlaceholders = new HashMap<>();
 	static final Map<String, Supplier<String>> placeholders = new HashMap<>();
+
+	static final Map<String, Long> lastPingTimes = new HashMap<>();
+	static final Map<String, String> lastPingErrors = new HashMap<>();
+	static final Map<String, Long> lastPlayerRetrieveTimes = new HashMap<>();
+	static final Map<String, String> lastPlayerRetrieveErrors = new HashMap<>();
 
 	static Main instance;
 
@@ -39,9 +46,32 @@ public class Main extends JavaPlugin {
 		this.addons = this.loadAddons();
 
 		this.getCommand("ssxc").setExecutor((sender, command, label, args) -> {
-			if (args.length == 1 && args[0].equals("reload")) {
+			if (args.length == 1 && args[0].equals("reload") && sender.hasPermission("ssxc.reload")) {
 				Main.this.reloadConfig();
 				sender.sendMessage("The configuration file has been reloaded");
+				return true;
+			} else if (args.length == 1 && args[0].equals("status") && sender.hasPermission("ssxc.status")) {
+				sender.sendMessage("Server pinger: ");
+				lastPingTimes.forEach((k, v) -> {
+					final long ago = System.currentTimeMillis() - v;
+					final String error = lastPingErrors.get(k);
+					if (error == null) {
+						sender.sendMessage(ChatColor.GREEN + String.format("  %s: Pinging successfully. Last ping %sms ago.", k, ago));
+					} else {
+						sender.sendMessage(ChatColor.RED + String.format("  %s: Error: %s. Last ping %sms ago.", k, error, ago));
+					}
+				});
+				sender.sendMessage("Player retriever: ");
+				lastPlayerRetrieveTimes.forEach((k, v) -> {
+					final long ago = System.currentTimeMillis() - v;
+					final String error = lastPlayerRetrieveErrors.get(k);
+					if (error == null) {
+						sender.sendMessage(ChatColor.GREEN + String.format("  %s: Pinging successfully. Last ping %sms ago.", k, ago));
+					} else {
+						sender.sendMessage(ChatColor.RED + String.format("  %s: Error: %s. Last ping %sms ago.", k, error, ago));
+					}
+				});
+
 				return true;
 			} else {
 				return false;
@@ -89,7 +119,7 @@ public class Main extends JavaPlugin {
 			try (URLClassLoader loader = new URLClassLoader(new URL[]{addonFile.toURI().toURL()}, this.getClassLoader())){
 				final Class<?> clazz = loader.loadClass(addonFile.getName().replace(".class", ""));
 				addon = (Addon) clazz.getConstructor().newInstance();
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException | 
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException |
 					IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				e.printStackTrace();
 				continue;

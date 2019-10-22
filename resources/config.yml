@@ -10,7 +10,5 @@ server-name: ''
 # You need to restart your server completely after changing this, /ssxc reload is not enough.
 send-interval: 4
 
-log-ping-fail: true
-
 # don't touch this option unless you know you need to
 password: "a"
