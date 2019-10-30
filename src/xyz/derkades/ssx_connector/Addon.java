@@ -15,7 +15,9 @@ public abstract class Addon implements Listener {
 	protected final JavaPlugin plugin = Main.instance;
 	protected FileConfiguration config;
 
-	public abstract String getName();
+	public String getName() {
+		return this.getClass().getSimpleName();
+	}
 
 	public abstract String getDescription();
 
