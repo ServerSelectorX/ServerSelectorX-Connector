@@ -59,7 +59,7 @@
 					<relocations>
 						<relocation>
 							<pattern>org.bstats.bukkit</pattern>
-							<shadedPattern>xyz.derkades.SSX_Connector.ext.bstats</shadedPattern>
+							<shadedPattern>xyz.derkades.ssx_connector.ext.bstats</shadedPattern>
 						</relocation>
 					</relocations>
 
