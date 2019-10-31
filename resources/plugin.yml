@@ -8,4 +8,7 @@ commands:
   ssxc:
     aliases: [serverselectorxconnector, ssxconnector]
     usage: |
-      /ssxc reload - Reload configuration files of all addons
+      /ssxc reload - Reload configuration files
+      /ssxc addons - List installed addons
+      /ssxc placeholders <addon> - List placeholders provided by the given addon
+      /ssxc status - Show the last time data has been sent for each address
