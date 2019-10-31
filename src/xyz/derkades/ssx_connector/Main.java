@@ -108,7 +108,7 @@ public class Main extends JavaPlugin {
 
 		for (final File addonFile : addonsFolder.listFiles()) {
 			if (!addonFile.getName().endsWith(".class")) {
-				if (!addonFile.getName().endsWith(".yml") && !addonFile.getName().endsWith(".yaml")) {
+				if (!addonFile.getName().endsWith(".yml")) {
 					this.getLogger().warning("The file " + addonFile.getAbsolutePath() + " does not belong in the addons folder.");
 				}
 				continue;
@@ -129,7 +129,8 @@ public class Main extends JavaPlugin {
 				throw new RuntimeException(String.format("Addon name mismatch (%s / %s", addon.getName(), addonFile.getName().replace(".class", "")));
 			}
 
-			addon.load();
+			addon.reloadConfig();
+			addon.onLoad();
 			addons.add(addon);
 		}
 

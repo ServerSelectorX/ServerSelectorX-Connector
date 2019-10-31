@@ -41,13 +41,9 @@ public abstract class Addon implements Listener {
 		Main.playerPlaceholders.put(key, placeholder);
 	}
 
-	void load() {
-		this.reloadConfig();
-		this.onLoad();
-	}
-
 	void reloadConfig() {
-		final File file = new File(Main.instance.addonsFolder, "config.yml");
+		final File file = new File(Main.instance.addonsFolder, this.getName() + ".yml");
+
 		if (file.exists()) {
 			this.config = YamlConfiguration.loadConfiguration(file);
 		}
