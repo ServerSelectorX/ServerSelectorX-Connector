@@ -62,6 +62,12 @@ public class Main extends JavaPlugin {
 		metrics.addCustomChart(new Metrics.SimplePie("default_password", () ->
 			this.getConfig().getString("password").equals("a") + ""));
 
+		metrics.addCustomChart(new Metrics.AdvancedPie("addons", () -> {
+			final Map<String, Integer> map = new HashMap<>();
+			this.addons.forEach((a) -> map.put(a.getName(), 1));
+			return map;
+		}));
+
 		placeholders.put("online", () -> String.valueOf(Bukkit.getOnlinePlayers().size()));
 		placeholders.put("max", () -> String.valueOf(Bukkit.getMaxPlayers()));
 	}
