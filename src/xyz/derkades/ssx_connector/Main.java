@@ -97,10 +97,6 @@ public class Main extends JavaPlugin {
 				continue;
 			}
 
-			if (!(addon.getName() + ".class").equals(addonFile.getName())) {
-				throw new RuntimeException(String.format("Addon name mismatch (%s / %s", addon.getName(), addonFile.getName().replace(".class", "")));
-			}
-
 			addon.reloadConfig();
 			addon.onLoad();
 			addons.add(addon);
