@@ -18,6 +18,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
+	// TODO store all this stuff in a better way
+
 	static final Map<UUID, String> players = new HashMap<>();
 	static final Map<String, BiFunction<UUID, String, String>> playerPlaceholders = new HashMap<>();
 	static final Map<String, Supplier<String>> placeholders = new HashMap<>();
@@ -26,6 +28,8 @@ public class Main extends JavaPlugin {
 	static final Map<String, String> lastPingErrors = new HashMap<>();
 	static final Map<String, Long> lastPlayerRetrieveTimes = new HashMap<>();
 	static final Map<String, String> lastPlayerRetrieveErrors = new HashMap<>();
+
+	static final Map<Addon, List<String>> addonPlaceholders = new HashMap<>();
 
 	static Main instance;
 

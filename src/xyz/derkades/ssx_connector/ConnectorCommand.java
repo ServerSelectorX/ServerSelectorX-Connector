@@ -48,6 +48,13 @@ public class ConnectorCommand implements CommandExecutor {
 				return true;
 			}
 
+			if (!Main.addonPlaceholders.containsKey(addon)) {
+				sender.sendMessage("This addon has not registered any placeholders.");
+				return true;
+			}
+
+			sender.sendMessage(String.join(", ", Main.addonPlaceholders.get(addon)));
+
 			return true;
 		}
 
