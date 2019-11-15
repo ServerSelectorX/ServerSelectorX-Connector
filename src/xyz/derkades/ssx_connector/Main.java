@@ -74,6 +74,11 @@ public class Main extends JavaPlugin {
 		addonsFolder.mkdirs();
 
 		for (final File addonFile : addonsFolder.listFiles()) {
+			if (addonFile.isDirectory()) {
+				this.getLogger().warning("Skipped directory " + addonFile.getPath() + "in addons directory. There should not be any directories in the addon directory.");
+				continue;
+			}
+
 			if (!addonFile.getName().endsWith(".class")) {
 				if (!addonFile.getName().endsWith(".yml")) {
 					this.getLogger().warning("The file " + addonFile.getAbsolutePath() + " does not belong in the addons folder.");
