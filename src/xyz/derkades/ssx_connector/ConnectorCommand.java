@@ -1,10 +1,7 @@
 package xyz.derkades.ssx_connector;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-
-import net.md_5.bungee.api.ChatColor;
+import org.spongepowered.api.command.spec.CommandExecutor;
 
 public class ConnectorCommand implements CommandExecutor {
 
@@ -52,36 +49,7 @@ public class ConnectorCommand implements CommandExecutor {
 		}
 
 		if (args.length == 1 && args[0].equals("status") && sender.hasPermission("ssxc.status")) {
-			if (Main.lastPingTimes.isEmpty()) {
-				sender.sendMessage("No data has been sent to servers");
-			} else {
-				sender.sendMessage("Placeholder sender: ");
-				Main.lastPingTimes.forEach((k, v) -> {
-					final long ago = System.currentTimeMillis() - v;
-					final String error = Main.lastPingErrors.get(k);
-					if (error == null) {
-						sender.sendMessage(ChatColor.GREEN + String.format("  %s: Pinging successfully. Last ping %sms ago.", k, ago));
-					} else {
-						sender.sendMessage(ChatColor.RED + String.format("  %s: Error: %s. Last ping %sms ago.", k, error, ago));
-					}
-				});
-			}
 
-			if (Main.lastPingTimes.isEmpty()) {
-				sender.sendMessage("The player list has been retrieved");
-			} else {
-				sender.sendMessage("Player retriever: ");
-				Main.lastPlayerRetrieveTimes.forEach((k, v) -> {
-					final long ago = System.currentTimeMillis() - v;
-					final String error = Main.lastPlayerRetrieveErrors.get(k);
-					if (error == null) {
-						sender.sendMessage(ChatColor.GREEN + String.format("  %s: Pinging successfully. Last ping %sms ago.", k, ago));
-					} else {
-						sender.sendMessage(ChatColor.RED + String.format("  %s: Error: %s. Last ping %sms ago.", k, error, ago));
-					}
-				});
-			}
-			return true;
 		}
 
 		return false;
