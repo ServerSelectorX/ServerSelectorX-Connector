@@ -88,7 +88,7 @@ public class Main extends JavaPlugin {
 
 			Addon addon;
 
-			try (URLClassLoader loader = new URLClassLoader(new URL[]{addonFile.toURI().toURL()}, this.getClassLoader())){
+			try (URLClassLoader loader = new URLClassLoader(new URL[]{addonsFolder.toURI().toURL()}, this.getClassLoader())){
 				final Class<?> clazz = loader.loadClass(addonFile.getName().replace(".class", ""));
 				addon = (Addon) clazz.getConstructor().newInstance();
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException |
