@@ -40,6 +40,8 @@ public class PlaceholderSender implements Runnable {
 			try {
 				address = "http://" + address;
 
+				Main.lastPingTimes.put(address, System.currentTimeMillis());
+
 				final String password = config.getString("password");
 				final String name = config.getString("server-name");
 				final String parameters = String.format("password=%s&server=%s&data=%s", this.encode(password), this.encode(name), this.encode(json));
@@ -67,7 +69,6 @@ public class PlaceholderSender implements Runnable {
 				}
 
 				Main.lastPingErrors.put(address, null);
-				Main.lastPingTimes.put(address, System.currentTimeMillis());
 			} catch (final MalformedURLException e) {
 				Main.lastPingErrors.put(address, "[PlaceholderSender] Invalid URL: " + address);
 			} catch (final IOException e) {
