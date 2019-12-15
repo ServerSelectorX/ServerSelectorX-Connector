@@ -1,5 +1,6 @@
 package xyz.derkades.ssx_connector.commands;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -52,7 +53,7 @@ public class StatusCommand implements CommandCallable {
 					source.sendMessage(
 							Text.builder(String.format("  %s: Error: %s. Last ping %sms ago.", k, error, ago))
 							.color(TextColors.RED).build());
-				}s
+				}
 			});
 		}
 
@@ -62,27 +63,27 @@ public class StatusCommand implements CommandCallable {
 	@Override
 	public List<String> getSuggestions(final CommandSource source, final String arguments, final Location<World> targetPosition)
 			throws CommandException {
-		return null;
+		return Arrays.asList();
 	}
 
 	@Override
 	public boolean testPermission(final CommandSource source) {
-		return false;
+		return source.hasPermission("ssxc.status");
 	}
 
 	@Override
 	public Optional<Text> getShortDescription(final CommandSource source) {
-		return null;
+		return Optional.of(Text.of("Show ping status"));
 	}
 
 	@Override
 	public Optional<Text> getHelp(final CommandSource source) {
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
 	public Text getUsage(final CommandSource source) {
-		return null;
+		return Text.of("/ssxc status");
 	}
 
 }
