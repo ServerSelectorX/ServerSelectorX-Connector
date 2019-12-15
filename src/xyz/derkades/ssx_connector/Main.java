@@ -77,19 +77,19 @@ public class Main {
 		return new File(this.privateConfigDir.toString(), "addons");
 	}
 
-	public void reloadConfig() {
-		try {
-			this.config = this.configManager.load();
-		} catch (final IOException e) {
-			throw new RuntimeException(e);
-		}
+	public void reloadConfig() throws IOException {
+		this.config = this.configManager.load();
 	}
 
     @Listener
     public void preInit(final GamePreInitializationEvent event) {
 		instance = this;
 
-		reloadConfig();
+		try {
+			reloadConfig();
+		} catch (final IOException e) {
+			throw new RuntimeException(e);
+		}
 
 		this.getAddonsFolder().mkdir();
 		this.addons = this.loadAddons();

@@ -19,16 +19,23 @@ public class ReloadCommand implements CommandCallable {
 
 	@Override
 	public CommandResult process(final CommandSource source, final String arguments) throws CommandException {
-		Main.instance.reloadConfig();
+		try {
+			Main.instance.reloadConfig();
+			source.sendMessage(Text.of("Reloaded plugin configuration file"));
+		} catch (final IOException e) {
+			source.sendMessage(Text.of("Failed to reload plugin configuration file."));
+		}
+
 		Main.instance.addons.forEach((addon) -> {
 			try {
 				addon.reloadConfig();
+				source.sendMessage(Text.of("Reloaded " + addon.getName()));
 			} catch (final IOException e) {
 				source.sendMessage(Text.of("Failed to reload configuration file for addon " + addon.getName()));
 			}
 		});
 
-		source.sendMessage(Text.of("The plugin configuration file and addon configuration files have been reloaded. Note that a complete server reload or restart is required for the (de)installation of addons."));
+		source.sendMessage(Text.of("Note that a complete server reload or restart is required for the (de)installation of addons."));
 
 		return CommandResult.success();
 	}
