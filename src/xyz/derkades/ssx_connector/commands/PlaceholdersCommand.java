@@ -41,22 +41,22 @@ public class PlaceholdersCommand implements CommandCallable {
 
 	@Override
 	public boolean testPermission(final CommandSource source) {
-		return false;
+		return source.hasPermission("ssxc.placeholders");
 	}
 
 	@Override
 	public Optional<Text> getShortDescription(final CommandSource source) {
-		return null;
+		return Optional.of(Text.of("List placeholders for an addon"));
 	}
 
 	@Override
 	public Optional<Text> getHelp(final CommandSource source) {
-		return null;
+		return Optional.empty();
 	}
 
 	@Override
 	public Text getUsage(final CommandSource source) {
-		return null;
+		return Text.of("/ssxc placeholders <addon>");
 	}
 
 }

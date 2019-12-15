@@ -47,9 +47,9 @@ public class Main {
 	public static final Map<String, Long> lastPlayerRetrieveTimes = new HashMap<>();
 	public static final Map<String, String> lastPlayerRetrieveErrors = new HashMap<>();
 
-	static Main instance;
+	public static Main instance;
 
-	List<Addon> addons;
+	public List<Addon> addons;
 
 	@Inject
 	Logger logger;
