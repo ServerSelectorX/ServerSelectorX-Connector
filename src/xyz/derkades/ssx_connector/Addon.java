@@ -1,19 +1,19 @@
 package xyz.derkades.ssx_connector;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.UUID;
 import java.util.function.Supplier;
 
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
+import org.spongepowered.api.Sponge;
 
-public abstract class Addon implements Listener {
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
+import ninja.leaping.configurate.hocon.HoconConfigurationLoader;
 
-	protected final JavaPlugin plugin = Main.instance;
-	protected FileConfiguration config;
+public abstract class Addon {
+
+//	protected final JavaPlugin plugin = Main.instance;
+	protected CommentedConfigurationNode config;
 
 	public String getName() {
 		return this.getClass().getSimpleName();
@@ -30,7 +30,7 @@ public abstract class Addon implements Listener {
 	public abstract void onLoad();
 
 	protected void registerListeners() {
-		Bukkit.getPluginManager().registerEvents(this, this.plugin);
+		Sponge.getEventManager().registerListeners(Main.instance, this);
 	}
 
 	protected void addPlaceholder(final String key, final Supplier<String> placeholder) {
@@ -41,12 +41,14 @@ public abstract class Addon implements Listener {
 		Main.playerPlaceholders.put(key, placeholder);
 	}
 
-	void reloadConfig() {
-		final File file = new File(Main.instance.addonsFolder, this.getName() + ".yml");
+	void reloadConfig() throws IOException {
+		final File file = new File(Main.instance.getAddonsFolder(), this.getName() + ".conf");
 
-		if (file.exists()) {
-			this.config = YamlConfiguration.loadConfiguration(file);
+		if (!file.exists()) {
+			return;
 		}
+
+		this.config = HoconConfigurationLoader.builder().setPath(file.toPath()).build().load();
 	}
 
 }

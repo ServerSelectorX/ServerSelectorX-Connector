@@ -157,7 +157,13 @@ public class Main {
 //				throw new RuntimeException(String.format("Addon name mismatch (%s / %s", addon.getName(), addonFile.getName().replace(".class", "")));
 //			}
 
-			addon.reloadConfig();
+			try {
+				addon.reloadConfig();
+			} catch (final IOException e) {
+				this.logger.warning("Failed to load addon " + addonFile.getPath());
+				e.printStackTrace();
+				continue;
+			}
 //			addon.onLoad();
 			addons.add(addon);
 		}
