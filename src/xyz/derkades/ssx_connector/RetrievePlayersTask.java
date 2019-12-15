@@ -13,18 +13,18 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import org.bukkit.configuration.file.FileConfiguration;
-
 import com.google.gson.Gson;
+
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 
 public class RetrievePlayersTask implements Runnable {
 
 	@Override
 	public void run() {
-		final FileConfiguration config = Main.instance.getConfig();
-		final Logger logger = Main.instance.getLogger();
+		final CommentedConfigurationNode config = Main.instance.config;
+		final Logger logger = Main.instance.logger;
 
-		for (String address : config.getStringList("addresses")) {
+		for (String address : config.getNode("addresses").getList((o) -> String.valueOf(o))) {
 			try {
 				final String password = this.encode(config.getString("password"));
 				address = "http://" + address + "/players?password=" + password;

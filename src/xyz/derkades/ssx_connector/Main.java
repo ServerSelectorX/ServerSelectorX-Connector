@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 
 import org.bstats.sponge.Metrics2;
 import org.spongepowered.api.Sponge;
-import org.spongepowered.api.command.CommandResult;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
 import org.spongepowered.api.config.DefaultConfig;
@@ -33,6 +32,8 @@ import com.google.inject.Inject;
 
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import xyz.derkades.ssx_connector.commands.PlaceholdersCommand;
+import xyz.derkades.ssx_connector.commands.StatusCommand;
 
 @Plugin(id = "ssxconnector", name = "SSX-Connector", version = "beta", description = "Connector plugin for ServerSelectorX")
 public class Main {
@@ -92,20 +93,24 @@ public class Main {
 
     @Listener
     public void init(final GameInitializationEvent event) {
-    	CommandSpec.builder()
+    	final CommandSpec command = CommandSpec.builder()
     	.description(Text.of(""))
     	.permission("ssx.connector.command")
-    	.child(, "")
+    	.child(new StatusCommand(), "status")
+    	.child(new PlaceholdersCommand(), "placeholders")
     	.build();
-    	this.getCommand("ssxc").setExecutor(new ConnectorCommand());
 
-//		this.metrics.addCustomChart(new SimplePie("data_send_interval", () -> sendIntervalSeconds + ""));
+    	Sponge.getCommandManager().register(this, command, "ssxc");
 
-//		this.metrics.addCustomChart(new SimplePie("hub_servers", () ->
-//			String.valueOf(this.getConfig().getStringList("addresses").size())));
+    	final int sendIntervalSeconds = this.config.getNode("send-interval").getInt(4);
+    	final int addresses = this.config.getNode("addresses").getList((t) -> t).size();
+    	final boolean defaultPassword = this.config.getNode("password").getString().equals("a");
 
-//		this.metrics.addCustomChart(new SimplePie("default_password", () ->
-//			this.getConfig().getString("password").equals("a") + ""));
+		this.metrics.addCustomChart(new Metrics2.SimplePie("data_send_interval", () -> sendIntervalSeconds + ""));
+
+		this.metrics.addCustomChart(new Metrics2.SimplePie("hub_servers", () -> addresses + ""));
+
+		this.metrics.addCustomChart(new Metrics2.SimplePie("default_password", () -> defaultPassword + ""));
 
 		placeholders.put("online", () -> String.valueOf(Sponge.getServer().getOnlinePlayers().size()));
 		placeholders.put("max", () -> String.valueOf(Sponge.getServer().getOnlinePlayers().size()));

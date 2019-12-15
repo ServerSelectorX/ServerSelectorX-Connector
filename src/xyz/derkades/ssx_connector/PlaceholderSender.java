@@ -11,16 +11,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import org.bukkit.configuration.file.FileConfiguration;
-
 import com.google.gson.Gson;
+
+import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 
 public class PlaceholderSender implements Runnable {
 
 	@Override
 	public void run() {
-		final FileConfiguration config = Main.instance.getConfig();
-		final Logger logger = Main.instance.getLogger();
+		final CommentedConfigurationNode config = Main.instance.config;
+		final Logger logger = Main.instance.logger;
 
 		final Map<String, Object> placeholders = new HashMap<>();
 
@@ -36,7 +36,7 @@ public class PlaceholderSender implements Runnable {
 
 		final String json = new Gson().toJson(placeholders).toString();
 
-		for (String address : config.getStringList("addresses")) {
+		for (String address : config.getNode("addresses").getList((o) -> String.valueOf(o))) {
 			try {
 				address = "http://" + address;
 
