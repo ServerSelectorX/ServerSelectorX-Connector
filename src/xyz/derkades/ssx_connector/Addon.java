@@ -41,7 +41,7 @@ public abstract class Addon {
 		Main.playerPlaceholders.put(key, placeholder);
 	}
 
-	void reloadConfig() throws IOException {
+	public void reloadConfig() throws IOException {
 		final File file = new File(Main.instance.getAddonsFolder(), this.getName() + ".conf");
 
 		if (!file.exists()) {
