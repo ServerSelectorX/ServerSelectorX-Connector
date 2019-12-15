@@ -2,6 +2,7 @@ package xyz.derkades.ssx_connector.commands;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.spongepowered.api.command.CommandCallable;
 import org.spongepowered.api.command.CommandException;
@@ -36,7 +37,7 @@ public class PlaceholdersCommand implements CommandCallable {
 	@Override
 	public List<String> getSuggestions(final CommandSource source, final String arguments, final Location<World> targetPosition)
 			throws CommandException {
-		return null;
+		return Main.instance.addons.stream().map(Addon::getName).collect(Collectors.toList());
 	}
 
 	@Override
