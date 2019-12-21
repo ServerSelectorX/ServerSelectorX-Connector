@@ -180,10 +180,6 @@ public class Main {
 				continue;
 			}
 
-//			if (!(addon.getName() + ".class").equals(addonFile.getName())) {
-//				throw new RuntimeException(String.format("Addon name mismatch (%s / %s", addon.getName(), addonFile.getName().replace(".class", "")));
-//			}
-
 			try {
 				addon.reloadConfig();
 			} catch (final IOException e) {
@@ -191,7 +187,7 @@ public class Main {
 				e.printStackTrace();
 				continue;
 			}
-//			addon.onLoad();
+
 			addons.add(addon);
 		}
 
