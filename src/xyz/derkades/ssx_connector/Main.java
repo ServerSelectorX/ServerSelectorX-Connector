@@ -7,6 +7,7 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,11 +56,11 @@ public class Main {
 	Logger logger;
 
 	@Inject
-	@DefaultConfig(sharedRoot = true)
-	private Path defaultConfig;
+	@DefaultConfig(sharedRoot = false)
+	private Path configPath;
 
 	@Inject
-	@DefaultConfig(sharedRoot = true)
+	@DefaultConfig(sharedRoot = false)
 	private ConfigurationLoader<CommentedConfigurationNode> configManager;
 
 	@Inject
@@ -69,8 +70,6 @@ public class Main {
 	@Inject
 	private Metrics2 metrics;
 
-//	final File addonsFolder = new File(this.getDataFolder(), "addons");
-
 	CommentedConfigurationNode config;
 
 	public File getAddonsFolder() {
@@ -78,7 +77,30 @@ public class Main {
 	}
 
 	public void reloadConfig() throws IOException {
-		this.config = this.configManager.load();
+		if (!this.configPath.toFile().exists()) {
+			this.config = this.configManager.load();
+
+			this.config.getNode("addresses")
+			.setValue(Arrays.asList("localhost:9782"))
+			.setComment("Addresses to ServerSelectorX instances, in ip:port format.");
+
+			this.config.getNode("server-name")
+			.setValue("")
+			.setComment("Set this to the name of this server EXACTLY as specified in the BungeeCord config.");
+
+			this.config.getNode("send-interval")
+			.setValue(4)
+			.setComment("How often the connector plugin sends placeholders (4 means once every 4 seconds)\n"
+					+ "You need to restart your server completely after changing this, /ssxc reload is not enough.");
+
+			this.config.getNode("password")
+			.setValue("a")
+			.setComment("Don't touch this option unless you know you need to.");
+
+			this.configManager.save(this.config);
+		} else {
+			this.config = this.configManager.load();
+		}
 	}
 
     @Listener
@@ -91,7 +113,8 @@ public class Main {
 			throw new RuntimeException(e);
 		}
 
-		this.getAddonsFolder().mkdir();
+		this.getAddonsFolder().mkdirs();
+
 		this.addons = this.loadAddons();
     }
 
