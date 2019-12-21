@@ -33,7 +33,9 @@ import com.google.inject.Inject;
 
 import ninja.leaping.configurate.commented.CommentedConfigurationNode;
 import ninja.leaping.configurate.loader.ConfigurationLoader;
+import xyz.derkades.ssx_connector.commands.AddonsCommand;
 import xyz.derkades.ssx_connector.commands.PlaceholdersCommand;
+import xyz.derkades.ssx_connector.commands.ReloadCommand;
 import xyz.derkades.ssx_connector.commands.StatusCommand;
 
 @Plugin(id = "ssxconnector", name = "SSX-Connector", version = "beta", description = "Connector plugin for ServerSelectorX")
@@ -123,8 +125,10 @@ public class Main {
     	final CommandSpec command = CommandSpec.builder()
     	.description(Text.of(""))
     	.permission("ssx.connector.command")
-    	.child(new StatusCommand(), "status")
+    	.child(new AddonsCommand(), "addons")
     	.child(new PlaceholdersCommand(), "placeholders")
+    	.child(new ReloadCommand(), "reload")
+    	.child(new StatusCommand(), "status")
     	.build();
 
     	Sponge.getCommandManager().register(this, command, "ssxc");
