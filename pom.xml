@@ -16,7 +16,7 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 
-		<resources>
+		<!-- <resources>
 			<resource>
 				<directory>resources</directory>
 				<includes>
@@ -24,7 +24,7 @@
 				</includes>
 				<filtering>true</filtering>
 			</resource>
-		</resources>
+		</resources> -->
 
 		<finalName>${project.name}-${project.version}</finalName>
 
@@ -92,7 +92,7 @@
 		<dependency>
 			<groupId>xyz.derkades</groupId>
 			<artifactId>Derkutils</artifactId>
-			<version>legacy</version>
+			<version>master</version>
 		</dependency>
 
 		<dependency>
