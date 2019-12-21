@@ -107,13 +107,13 @@ public class Main {
     public void preInit(final GamePreInitializationEvent event) {
 		instance = this;
 
+		this.getAddonsFolder().mkdirs();
+
 		try {
 			reloadConfig();
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
-
-		this.getAddonsFolder().mkdirs();
 
 		this.addons = this.loadAddons();
     }
