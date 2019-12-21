@@ -16,16 +16,6 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 
-		<!-- <resources>
-			<resource>
-				<directory>resources</directory>
-				<includes>
-					<include>*</include>
-				</includes>
-				<filtering>true</filtering>
-			</resource>
-		</resources> -->
-
 		<finalName>${project.name}-${project.version}</finalName>
 
 		<plugins>
@@ -61,18 +51,9 @@
 					<relocations>
 						<relocation>
 							<pattern>org.bstats.bukkit</pattern>
-							<shadedPattern>xyz.derkades.ssx_connector.ext.bstats</shadedPattern>
+							<shadedPattern>xyz.derkades.ssx_connector.lib.bstats</shadedPattern>
 						</relocation>
 					</relocations>
-
-					<artifactSet>
-						<excludes>
-							<exclude>org.apache.commons:commons-lang3</exclude>
-							<exclude>org.bukkit:bukkit</exclude>
-							<exclude>org.yaml:snakeyaml</exclude>
-							<exclude>commons-lang:commons-lang</exclude>
-						</excludes>
-					</artifactSet>
 				</configuration>
 			</plugin>
 
@@ -88,13 +69,7 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-
-		<dependency>
-			<groupId>xyz.derkades</groupId>
-			<artifactId>Derkutils</artifactId>
-			<version>master</version>
-		</dependency>
-
+		
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-sponge</artifactId>
