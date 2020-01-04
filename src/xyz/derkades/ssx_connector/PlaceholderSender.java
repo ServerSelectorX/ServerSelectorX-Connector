@@ -40,8 +40,10 @@ public class PlaceholderSender implements Runnable {
 			try {
 				address = "http://" + address;
 
-				final String password = config.getString("password");
-				final String name = config.getString("server-name");
+				Main.lastPingTimes.put(address, System.currentTimeMillis());
+
+				final String password = config.getNode("password").getString("a");
+				final String name = config.getNode("server-name").getString();
 				final String parameters = String.format("password=%s&server=%s&data=%s", this.encode(password), this.encode(name), this.encode(json));
 
 				final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
@@ -54,20 +56,19 @@ public class PlaceholderSender implements Runnable {
 
 				if (connection.getResponseCode() == 401) {
 					Main.lastPingErrors.put(address, "Invalid password");
-					logger.severe("[PlaceholderSender] The provided password is invalid (" + password + ")");
+					logger.warning("[PlaceholderSender] The provided password is invalid (" + password + ")");
 					return;
 				}
 
 				if (connection.getResponseCode() == 400) {
 					Main.lastPingErrors.put(address, "Error 400 (plugin bug)");
-					logger.severe("[PlaceholderSender] An error 400 occured. Please report this error.");
-					logger.severe("[PlaceholderSender] " + address);
-					logger.severe("[PlaceholderSender] Parameters: " + parameters);
+					logger.warning("[PlaceholderSender] An error 400 occured. Please report this error.");
+					logger.warning("[PlaceholderSender] " + address);
+					logger.warning("[PlaceholderSender] Parameters: " + parameters);
 					continue;
 				}
 
 				Main.lastPingErrors.put(address, null);
-				Main.lastPingTimes.put(address, System.currentTimeMillis());
 			} catch (final MalformedURLException e) {
 				Main.lastPingErrors.put(address, "[PlaceholderSender] Invalid URL: " + address);
 			} catch (final IOException e) {

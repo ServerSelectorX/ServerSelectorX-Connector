@@ -24,24 +24,25 @@ public class RetrievePlayersTask implements Runnable {
 		final CommentedConfigurationNode config = Main.instance.config;
 		final Logger logger = Main.instance.logger;
 
-		for (String address : config.getNode("addresses").getList((o) -> String.valueOf(o))) {
+		for (final String address : config.getNode("addresses").getList((o) -> String.valueOf(o))) {
 			try {
-				final String password = this.encode(config.getString("password"));
-				address = "http://" + address + "/players?password=" + password;
+				final String password = this.encode(config.getNode("password").getString("a"));
 
-				final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
+				Main.lastPlayerRetrieveTimes.put(address, System.currentTimeMillis());
+
+				final HttpURLConnection connection = (HttpURLConnection) new URL("http://" + address + "/players?password=" + password).openConnection();
 				//connection.setRequestProperty("Content-Length", parameters.length() + "");
 
 				if (connection.getResponseCode() == 401) {
 					Main.lastPlayerRetrieveErrors.put(address, "Invalid password");
-					logger.severe("[PlayerRetriever] The provided password is invalid (" + password + ")");
+					logger.warning("[PlayerRetriever] The provided password is invalid (" + password + ")");
 					continue;
 				}
 
 				if (connection.getResponseCode() == 400) {
 					Main.lastPlayerRetrieveErrors.put(address, "Error 400 (plugin bug)");
-					logger.severe("[PlayerRetriever] An error 400 occured. Please report this error.");
-					logger.severe(address);
+					logger.warning("[PlayerRetriever] An error 400 occured. Please report this error.");
+					logger.warning(address);
 					continue;
 				}
 
@@ -63,7 +64,6 @@ public class RetrievePlayersTask implements Runnable {
 				inputStream.close();
 
 				Main.lastPlayerRetrieveErrors.put(address, null);
-				Main.lastPlayerRetrieveTimes.put(address, System.currentTimeMillis());
 			} catch (final MalformedURLException e) {
 				Main.lastPlayerRetrieveErrors.put(address, "[PlayerRetriever] Invalid URL: " + address);
 			} catch (final IOException e) {

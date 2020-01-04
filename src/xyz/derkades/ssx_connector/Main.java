@@ -154,12 +154,13 @@ public class Main {
 
     	final int sendIntervalSeconds = this.config.getNode("send-interval").getInt(4);
 
-    	Task.builder()
-    	.async()
-    	.interval(sendIntervalSeconds, TimeUnit.SECONDS)
-    	.execute(new PlaceholderSender())
-    	.delay((long) (sendIntervalSeconds / 2000.0), TimeUnit.MILLISECONDS) // run player retriever offset from data sender
-		.execute(new RetrievePlayersTask());
+    	Task.builder().execute(new PlaceholderSender())
+    	.async().interval(sendIntervalSeconds, TimeUnit.SECONDS)
+    	.submit(this);
+
+    	Task.builder().execute(new RetrievePlayersTask())
+    	.async().interval(sendIntervalSeconds, TimeUnit.SECONDS)
+		.submit(this);
     }
 
 	private List<Addon> loadAddons() {
