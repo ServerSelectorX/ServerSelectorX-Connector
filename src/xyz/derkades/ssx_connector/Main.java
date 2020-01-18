@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
 
 import org.bstats.bukkit.Metrics;
@@ -20,16 +21,16 @@ public class Main extends JavaPlugin {
 
 	// TODO store all this stuff in a better way
 
-	static final Map<UUID, String> players = new HashMap<>();
-	static final Map<String, BiFunction<UUID, String, String>> playerPlaceholders = new HashMap<>();
-	static final Map<String, Supplier<String>> placeholders = new HashMap<>();
+	static final Map<UUID, String> players = new ConcurrentHashMap<>();
+	static final Map<String, BiFunction<UUID, String, String>> playerPlaceholders = new ConcurrentHashMap<>();
+	static final Map<String, Supplier<String>> placeholders = new ConcurrentHashMap<>();
 
-	static final Map<String, Long> lastPingTimes = new HashMap<>();
-	static final Map<String, String> lastPingErrors = new HashMap<>();
-	static final Map<String, Long> lastPlayerRetrieveTimes = new HashMap<>();
-	static final Map<String, String> lastPlayerRetrieveErrors = new HashMap<>();
+	static final Map<String, Long> lastPingTimes = new ConcurrentHashMap<>();
+	static final Map<String, String> lastPingErrors = new ConcurrentHashMap<>();
+	static final Map<String, Long> lastPlayerRetrieveTimes = new ConcurrentHashMap<>();
+	static final Map<String, String> lastPlayerRetrieveErrors = new ConcurrentHashMap<>();
 
-	static final Map<Addon, List<String>> addonPlaceholders = new HashMap<>();
+	static final Map<Addon, List<String>> addonPlaceholders = new ConcurrentHashMap<>();
 
 	static Main instance;
 
