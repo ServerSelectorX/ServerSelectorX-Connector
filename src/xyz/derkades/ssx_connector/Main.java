@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -26,9 +27,9 @@ public class Main extends JavaPlugin {
 	static final Map<String, Supplier<String>> placeholders = new ConcurrentHashMap<>();
 
 	static final Map<String, Long> lastPingTimes = new ConcurrentHashMap<>();
-	static final Map<String, String> lastPingErrors = new ConcurrentHashMap<>();
+	static final Map<String, Optional<String>> lastPingErrors = new ConcurrentHashMap<>();
 	static final Map<String, Long> lastPlayerRetrieveTimes = new ConcurrentHashMap<>();
-	static final Map<String, String> lastPlayerRetrieveErrors = new ConcurrentHashMap<>();
+	static final Map<String, Optional<String>> lastPlayerRetrieveErrors = new ConcurrentHashMap<>();
 
 	static final Map<Addon, List<String>> addonPlaceholders = new ConcurrentHashMap<>();
 

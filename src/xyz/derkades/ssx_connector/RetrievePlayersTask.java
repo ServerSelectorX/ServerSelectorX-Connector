@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -29,17 +30,19 @@ public class RetrievePlayersTask implements Runnable {
 				final String password = this.encode(config.getString("password"));
 				address = "http://" + address + "/players?password=" + password;
 
+				Main.lastPlayerRetrieveTimes.put(address, System.currentTimeMillis());
+
 				final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 				//connection.setRequestProperty("Content-Length", parameters.length() + "");
 
 				if (connection.getResponseCode() == 401) {
-					Main.lastPlayerRetrieveErrors.put(address, "Invalid password");
+					Main.lastPlayerRetrieveErrors.put(address, Optional.of("Invalid password"));
 					logger.severe("[PlayerRetriever] The provided password is invalid (" + password + ")");
 					continue;
 				}
 
 				if (connection.getResponseCode() == 400) {
-					Main.lastPlayerRetrieveErrors.put(address, "Error 400 (plugin bug)");
+					Main.lastPlayerRetrieveErrors.put(address, Optional.of("Error 400 (plugin bug)"));
 					logger.severe("[PlayerRetriever] An error 400 occured. Please report this error.");
 					logger.severe(address);
 					continue;
@@ -62,12 +65,11 @@ public class RetrievePlayersTask implements Runnable {
 
 				inputStream.close();
 
-				Main.lastPlayerRetrieveErrors.put(address, null);
-				Main.lastPlayerRetrieveTimes.put(address, System.currentTimeMillis());
+				Main.lastPlayerRetrieveErrors.put(address, Optional.empty());
 			} catch (final MalformedURLException e) {
-				Main.lastPlayerRetrieveErrors.put(address, "[PlayerRetriever] Invalid URL: " + address);
+				Main.lastPlayerRetrieveErrors.put(address, Optional.of("[PlayerRetriever] Invalid URL: " + address));
 			} catch (final IOException e) {
-				Main.lastPlayerRetrieveErrors.put(address, "[PlayerRetriever] IOException: " + e.getMessage());
+				Main.lastPlayerRetrieveErrors.put(address, Optional.of("[PlayerRetriever] IOException: " + e.getMessage()));
 			}
 		}
 	}

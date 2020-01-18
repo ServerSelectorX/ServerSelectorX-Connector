@@ -9,6 +9,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.bukkit.configuration.file.FileConfiguration;
@@ -55,24 +56,24 @@ public class PlaceholderSender implements Runnable {
 				outputStream.writeBytes(parameters);
 
 				if (connection.getResponseCode() == 401) {
-					Main.lastPingErrors.put(address, "Invalid password");
+					Main.lastPingErrors.put(address, Optional.of("Invalid password"));
 					logger.severe("[PlaceholderSender] The provided password is invalid (" + password + ")");
 					return;
 				}
 
 				if (connection.getResponseCode() == 400) {
-					Main.lastPingErrors.put(address, "Error 400 (plugin bug)");
+					Main.lastPingErrors.put(address, Optional.of("Error 400 (plugin bug)"));
 					logger.severe("[PlaceholderSender] An error 400 occured. Please report this error.");
 					logger.severe("[PlaceholderSender] " + address);
 					logger.severe("[PlaceholderSender] Parameters: " + parameters);
 					continue;
 				}
 
-				Main.lastPingErrors.put(address, null);
+				Main.lastPingErrors.put(address, Optional.empty());
 			} catch (final MalformedURLException e) {
-				Main.lastPingErrors.put(address, "[PlaceholderSender] Invalid URL: " + address);
+				Main.lastPingErrors.put(address, Optional.of("[PlaceholderSender] Invalid URL: " + address));
 			} catch (final IOException e) {
-				Main.lastPingErrors.put(address, "[PlaceholderSender] IOException: " + e.getMessage());
+				Main.lastPingErrors.put(address, Optional.of("[PlaceholderSender] IOException: " + e.getMessage()));
 			}
 		}
 	}

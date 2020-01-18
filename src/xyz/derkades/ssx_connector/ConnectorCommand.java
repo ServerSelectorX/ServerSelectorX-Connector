@@ -1,5 +1,7 @@
 package xyz.derkades.ssx_connector;
 
+import java.util.Optional;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -65,11 +67,11 @@ public class ConnectorCommand implements CommandExecutor {
 				sender.sendMessage("Placeholder sender: ");
 				Main.lastPingTimes.forEach((k, v) -> {
 					final long ago = System.currentTimeMillis() - v;
-					final String error = Main.lastPingErrors.get(k);
-					if (error == null) {
+					final Optional<String> error = Main.lastPingErrors.get(k);
+					if (!error.isPresent()) {
 						sender.sendMessage(ChatColor.GREEN + String.format("  %s: Pinging successfully. Last ping %sms ago.", k, ago));
 					} else {
-						sender.sendMessage(ChatColor.RED + String.format("  %s: Error: %s. Last ping %sms ago.", k, error, ago));
+						sender.sendMessage(ChatColor.RED + String.format("  %s: Error: %s. Last ping %sms ago.", k, error.get(), ago));
 					}
 				});
 			}
@@ -80,11 +82,11 @@ public class ConnectorCommand implements CommandExecutor {
 				sender.sendMessage("Player retriever: ");
 				Main.lastPlayerRetrieveTimes.forEach((k, v) -> {
 					final long ago = System.currentTimeMillis() - v;
-					final String error = Main.lastPlayerRetrieveErrors.get(k);
-					if (error == null) {
+					final Optional<String> error = Main.lastPlayerRetrieveErrors.get(k);
+					if (!error.isPresent()) {
 						sender.sendMessage(ChatColor.GREEN + String.format("  %s: Pinging successfully. Last ping %sms ago.", k, ago));
 					} else {
-						sender.sendMessage(ChatColor.RED + String.format("  %s: Error: %s. Last ping %sms ago.", k, error, ago));
+						sender.sendMessage(ChatColor.RED + String.format("  %s: Error: %s. Last ping %sms ago.", k, error.get(), ago));
 					}
 				});
 			}
