@@ -25,14 +25,14 @@ public class StatusCommand implements CommandCallable {
 			source.sendMessage(Text.of("Placeholder sender: "));
 			Main.lastPingTimes.forEach((k, v) -> {
 				final long ago = System.currentTimeMillis() - v;
-				final String error = Main.lastPingErrors.get(k);
-				if (error == null) {
+				final Optional<String> error = Main.lastPingErrors.get(k);
+				if (!error.isPresent()) {
 					source.sendMessage(
 							Text.builder(String.format("  %s: Pinging successfully. Last ping %sms ago.", k, ago))
 							.color(TextColors.GREEN).build());
 				} else {
 					source.sendMessage(
-							Text.builder(String.format("  %s: Error: %s. Last ping %sms ago.", k, error, ago))
+							Text.builder(String.format("  %s: Error: %s. Last ping %sms ago.", k, error.get(), ago))
 							.color(TextColors.RED).build());
 				}
 			});
@@ -44,14 +44,14 @@ public class StatusCommand implements CommandCallable {
 			source.sendMessage(Text.of("Player retriever: "));
 			Main.lastPlayerRetrieveTimes.forEach((k, v) -> {
 				final long ago = System.currentTimeMillis() - v;
-				final String error = Main.lastPlayerRetrieveErrors.get(k);
-				if (error == null) {
+				final Optional<String> error = Main.lastPlayerRetrieveErrors.get(k);
+				if (!error.isPresent()) {
 					source.sendMessage(
 							Text.builder(String.format("  %s: Pinging successfully. Last ping %sms ago.", k, ago))
 							.color(TextColors.GREEN).build());
 				} else {
 					source.sendMessage(
-							Text.builder(String.format("  %s: Error: %s. Last ping %sms ago.", k, error, ago))
+							Text.builder(String.format("  %s: Error: %s. Last ping %sms ago.", k, error.get(), ago))
 							.color(TextColors.RED).build());
 				}
 			});

@@ -11,7 +11,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
@@ -41,14 +43,17 @@ import xyz.derkades.ssx_connector.commands.StatusCommand;
 @Plugin(id = "ssxconnector", name = "SSX-Connector", version = "beta", description = "Connector plugin for ServerSelectorX")
 public class Main {
 
-	static final Map<UUID, String> players = new HashMap<>();
-	static final Map<String, BiFunction<UUID, String, String>> playerPlaceholders = new HashMap<>();
-	static final Map<String, Supplier<String>> placeholders = new HashMap<>();
+	// TODO store all this stuff in a better way
+	public static final Map<UUID, String> players = new ConcurrentHashMap<>();
+	public static final Map<String, BiFunction<UUID, String, String>> playerPlaceholders = new ConcurrentHashMap<>();
+	public static final Map<String, Supplier<String>> placeholders = new ConcurrentHashMap<>();
 
-	public static final Map<String, Long> lastPingTimes = new HashMap<>();
-	public static final Map<String, String> lastPingErrors = new HashMap<>();
-	public static final Map<String, Long> lastPlayerRetrieveTimes = new HashMap<>();
-	public static final Map<String, String> lastPlayerRetrieveErrors = new HashMap<>();
+	public static final Map<String, Long> lastPingTimes = new ConcurrentHashMap<>();
+	public static final Map<String, Optional<String>> lastPingErrors = new ConcurrentHashMap<>();
+	public static final Map<String, Long> lastPlayerRetrieveTimes = new ConcurrentHashMap<>();
+	public static final Map<String, Optional<String>> lastPlayerRetrieveErrors = new ConcurrentHashMap<>();
+
+	public static final Map<Addon, List<String>> addonPlaceholders = new ConcurrentHashMap<>();
 
 	public static Main instance;
 
@@ -69,10 +74,15 @@ public class Main {
 	@ConfigDir(sharedRoot = false)
 	private Path privateConfigDir;
 
-	@Inject
-	private Metrics2 metrics;
+	//@Inject
+	private final Metrics2 metrics;
 
 	CommentedConfigurationNode config;
+
+	@Inject
+	public Main(final Metrics2.Factory metricsFactory) {
+		this.metrics = metricsFactory.make(3000);
+	}
 
 	public File getAddonsFolder() {
 		return new File(this.privateConfigDir.toString(), "addons");
@@ -143,13 +153,18 @@ public class Main {
 
 		this.metrics.addCustomChart(new Metrics2.SimplePie("default_password", () -> defaultPassword + ""));
 
+		this.metrics.addCustomChart(new Metrics2.AdvancedPie("addons", () -> {
+			final Map<String, Integer> map = new HashMap<>();
+			this.addons.forEach((a) -> map.put(a.getName(), 1));
+			return map;
+		}));
+
 		placeholders.put("online", () -> String.valueOf(Sponge.getServer().getOnlinePlayers().size()));
 		placeholders.put("max", () -> String.valueOf(Sponge.getServer().getOnlinePlayers().size()));
-    }
+  }
 
-
-    @Listener
-    public void postInit(final GamePostInitializationEvent event) {
+  @Listener
+  public void postInit(final GamePostInitializationEvent event) {
     	this.addons.forEach(Addon::onLoad);
 
     	final int sendIntervalSeconds = this.config.getNode("send-interval").getInt(4);
@@ -161,12 +176,17 @@ public class Main {
     	Task.builder().execute(new RetrievePlayersTask())
     	.async().interval(sendIntervalSeconds, TimeUnit.SECONDS)
 		.submit(this);
-    }
+  }
 
 	private List<Addon> loadAddons() {
 		final List<Addon> addons = new ArrayList<>();
 
 		for (final File addonFile : this.getAddonsFolder().listFiles()) {
+			if (addonFile.isDirectory()) {
+				this.logger.warning("Skipped directory " + addonFile.getPath() + "in addons directory. There should not be any directories in the addon directory.");
+				continue;
+			}
+
 			if (!addonFile.getName().endsWith(".class")) {
 				if (!addonFile.getName().endsWith(".yml")) {
 					this.logger.warning("The file " + addonFile.getAbsolutePath() + " does not belong in the addons folder.");
@@ -187,13 +207,14 @@ public class Main {
 
 			try {
 				addon.reloadConfig();
+				addon.onLoad();
+				addons.add(addon);
 			} catch (final IOException e) {
 				this.logger.warning("Failed to load addon " + addonFile.getPath());
 				e.printStackTrace();
 				continue;
 			}
 
-			addons.add(addon);
 		}
 
 		return addons;

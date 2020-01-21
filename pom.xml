@@ -69,11 +69,11 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-sponge</artifactId>
-			<version>1.5</version>
+			<version>1.7</version>
 		</dependency>
 
 		<dependency>
