@@ -117,4 +117,17 @@ public class Main extends JavaPlugin {
 		return addons;
 	}
 
+	void reloadAddons() {
+		final List<Addon> addons2 = new ArrayList<>(this.addons);
+		placeholders.clear();
+		playerPlaceholders.clear();
+		addonPlaceholders.clear();
+		this.addons.clear();
+		for (final Addon addon : addons2) {
+			addon.reloadConfig();
+			addon.onLoad();
+			this.addons.add(addon);
+		}
+	}
+
 }
