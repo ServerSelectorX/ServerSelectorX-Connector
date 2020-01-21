@@ -58,7 +58,7 @@ public class Main extends JavaPlugin {
 
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new RetrievePlayersTask(), 10*20, 10*20);
 
-		final Metrics metrics = new Metrics(this);
+		final Metrics metrics = new Metrics(this, 3000);
 
 		metrics.addCustomChart(new Metrics.SimplePie("data_send_interval", () -> sendIntervalSeconds + ""));
 
