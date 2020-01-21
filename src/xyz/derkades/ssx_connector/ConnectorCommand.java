@@ -12,7 +12,7 @@ public class ConnectorCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-		if (args.length == 1 && args[0].equals("reload") && sender.hasPermission("ssxc.reload")) {
+		if (args.length == 1 && (args[0].equals("reload") || args[0].equals("rl")) && sender.hasPermission("ssxc.reload")) {
 			Main.instance.reloadConfig();
 //			Main.instance.addons.forEach(Addon::reloadConfig);
 			Main.instance.reloadAddons();
