@@ -36,7 +36,7 @@ public class RetrievePlayersTask implements Runnable {
 
 				if (connection.getResponseCode() == 401) {
 					Main.lastPlayerRetrieveErrors.put(address, Optional.of("Invalid password"));
-					logger.warning("[PlayerRetriever] The provided password is invalid (" + password + ")");
+					logger.severe("[PlayerRetriever] The provided password is invalid (" + password + ")");
 					continue;
 				}
 

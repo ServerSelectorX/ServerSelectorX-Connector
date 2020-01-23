@@ -196,7 +196,7 @@ public class Main {
 
 			Addon addon;
 
-			try (URLClassLoader loader = new URLClassLoader(new URL[]{addonFile.toURI().toURL()})){
+			try (URLClassLoader loader = new URLClassLoader(new URL[]{this.getAddonsFolder().toURI().toURL()})){
 				final Class<?> clazz = loader.loadClass(addonFile.getName().replace(".class", ""));
 				addon = (Addon) clazz.getConstructor().newInstance();
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException |
@@ -214,10 +214,28 @@ public class Main {
 				e.printStackTrace();
 				continue;
 			}
-
 		}
 
 		return addons;
+	}
+
+	void reloadAddons() {
+		final List<Addon> addons2 = new ArrayList<>(this.addons);
+		placeholders.clear();
+		playerPlaceholders.clear();
+		addonPlaceholders.clear();
+		this.addons.clear();
+		for (final Addon addon : addons2) {
+			try {
+				addon.reloadConfig();
+				addon.onLoad();
+				this.addons.add(addon);
+			} catch (final IOException e) {
+				this.logger.warning("Failed to load addon " + addon.getName());
+				e.printStackTrace();
+				continue;
+			}
+		}
 	}
 
 }
