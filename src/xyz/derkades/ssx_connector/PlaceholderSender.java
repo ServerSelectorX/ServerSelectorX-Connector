@@ -117,7 +117,7 @@ public class PlaceholderSender implements Runnable {
 	}
 	
 	private Map<UUID, String> getPlayerList(String address, final String encodedPassword) throws PingException, IOException {
-		address = new StringBuilder("http://").append("/players?password=").append(encodedPassword).toString();
+		address = new StringBuilder("http://").append(address).append("/players?password=").append(encodedPassword).toString();
 
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 
