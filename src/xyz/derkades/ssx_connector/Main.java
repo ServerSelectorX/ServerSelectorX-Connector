@@ -14,6 +14,7 @@ import java.util.Optional;
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitTask;
 
 public class Main extends JavaPlugin {
 	
@@ -22,6 +23,8 @@ public class Main extends JavaPlugin {
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
 
 	List<Addon> addons;
+	
+	private BukkitTask pingTask = null;
 
 	@Override
 	public void onEnable() {
@@ -35,28 +38,11 @@ public class Main extends JavaPlugin {
 
 		this.getCommand("ssxc").setExecutor(new ConnectorCommand());
 
-		final int sendIntervalSeconds = this.getConfig().getInt("send-interval", 4);
-
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(),
-				sendIntervalSeconds * 20, sendIntervalSeconds * 20);
-
-		final Metrics metrics = new Metrics(this, 3000);
-
-		metrics.addCustomChart(new Metrics.SimplePie("data_send_interval", () -> sendIntervalSeconds + ""));
-
-		metrics.addCustomChart(new Metrics.SimplePie("hub_servers", () ->
-			this.getConfig().getStringList("addresses").size() + ""));
-
-		metrics.addCustomChart(new Metrics.SimplePie("default_password", () ->
-			this.getConfig().getString("password").equals("a") + ""));
-
-		metrics.addCustomChart(new Metrics.AdvancedPie("addons", () -> {
-			final Map<String, Integer> map = new HashMap<>();
-			this.addons.forEach((a) -> map.put(a.getName(), 1));
-			return map;
-		}));
+		restartPingTask();
 		
 		registerCorePlaceholders();
+		
+		registerMetrics();
 	}
 
 	private List<Addon> loadAddons() {
@@ -116,6 +102,36 @@ public class Main extends JavaPlugin {
 		
 		PlaceholderRegistry.registerPlaceholder(Optional.empty(), "max",
 				() -> String.valueOf(Bukkit.getMaxPlayers()));
+	}
+	
+	void restartPingTask() {
+		if (pingTask != null) {
+			pingTask.cancel();
+		}
+		
+		int addresses = getConfig().getStringList("addresses").size();
+		int interval = getConfig().getInt("send-interval");
+		int taskIntervalTicks = interval / addresses * 20;
+		
+		pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 40, taskIntervalTicks);
+	}
+	
+	private void registerMetrics() {
+		final Metrics metrics = new Metrics(this, 3000);
+
+		metrics.addCustomChart(new Metrics.SimplePie("data_send_interval", () -> this.getConfig().getInt("send-interval", 4) + ""));
+
+		metrics.addCustomChart(new Metrics.SimplePie("hub_servers", () ->
+			this.getConfig().getStringList("addresses").size() + ""));
+
+		metrics.addCustomChart(new Metrics.SimplePie("default_password", () ->
+			this.getConfig().getString("password").equals("a") + ""));
+
+		metrics.addCustomChart(new Metrics.AdvancedPie("addons", () -> {
+			final Map<String, Integer> map = new HashMap<>();
+			this.addons.forEach((a) -> map.put(a.getName(), 1));
+			return map;
+		}));
 	}
 
 }

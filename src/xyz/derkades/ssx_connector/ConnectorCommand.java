@@ -18,8 +18,8 @@ public class ConnectorCommand implements CommandExecutor {
 	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
 		if (args.length == 1 && (args[0].equals("reload") || args[0].equals("rl")) && sender.hasPermission("ssxc.reload")) {
 			Main.instance.reloadConfig();
-//			Main.instance.addons.forEach(Addon::reloadConfig);
 			Main.instance.reloadAddons();
+			Main.instance.restartPingTask();
 			sender.sendMessage("The plugin configuration file and addon configuration files have been reloaded. A complete server reload or restart is required for the (de)installation of addons.");
 			return true;
 		}
