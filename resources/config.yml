@@ -1,5 +1,5 @@
-# Ip adresses and port of hub servers
-# Set the port in 'config.yml' in your ServerSelectorX folder
+# Addresses of servers to send data to (the server(s) with ServerSelectorX installed).
+# Set the port in 'api.yml' in your ServerSelectorX folder
 addresses:
 - 'localhost:9782'
 
