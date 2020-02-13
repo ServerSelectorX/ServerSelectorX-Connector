@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Supplier;
@@ -20,16 +19,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
 
-	// TODO store all this stuff in a better way
-
-	static final Map<UUID, String> players = new ConcurrentHashMap<>();
 	static final Map<String, BiFunction<UUID, String, String>> playerPlaceholders = new ConcurrentHashMap<>();
 	static final Map<String, Supplier<String>> placeholders = new ConcurrentHashMap<>();
-
-	static final Map<String, Long> lastPingTimes = new ConcurrentHashMap<>();
-	static final Map<String, Optional<String>> lastPingErrors = new ConcurrentHashMap<>();
-	static final Map<String, Long> lastPlayerRetrieveTimes = new ConcurrentHashMap<>();
-	static final Map<String, Optional<String>> lastPlayerRetrieveErrors = new ConcurrentHashMap<>();
 
 	static final Map<Addon, List<String>> addonPlaceholders = new ConcurrentHashMap<>();
 
@@ -55,8 +46,6 @@ public class Main extends JavaPlugin {
 
 		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(),
 				sendIntervalSeconds * 20, sendIntervalSeconds * 20);
-
-		Bukkit.getScheduler().runTaskTimerAsynchronously(this, new RetrievePlayersTask(), 10*20, 10*20);
 
 		final Metrics metrics = new Metrics(this, 3000);
 

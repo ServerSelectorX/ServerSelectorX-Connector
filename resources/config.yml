@@ -8,6 +8,9 @@ server-name: ''
 
 # How often the connector plugin sends placeholders (4 means once every 4 seconds)
 # You need to restart your server completely after changing this, /ssxc reload is not enough.
+# If you have multiple servers, it will ping them in order, waiting for the specified
+# amount of time in between. So, if you have multiple servers, you might want to lower this
+# value so it doesn't take a long time between requests to a specific server.
 send-interval: 4
 
 # don't touch this option unless you know you need to
