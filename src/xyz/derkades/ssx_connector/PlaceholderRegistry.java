@@ -3,16 +3,17 @@ package xyz.derkades.ssx_connector;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 public class PlaceholderRegistry {
 	
-	private static final Set<Placeholder> placeholders = new ConcurrentSkipListSet<>();
+	// This list does not support concurrent modifications. That shouldn't be a problem, because
+	// it is only modified when placeholders are registered which only happens at server startup.
+	// The list is only read using commands (after server startup)
+	private static final List<Placeholder> placeholders = new ArrayList<>();
 	
 	public static void registerPlaceholder(final Optional<Addon> addon, final String key, final BiFunction<UUID, String, String> valueFunction) {
 		placeholders.add(new PlayerPlaceholder(key, addon, valueFunction));
