@@ -39,7 +39,13 @@ public class PlaceholderSender implements Runnable {
 		
 		final String address = this.addresses.pop();
 		
+		debug("Preparing to send data to " + address);
+		
 		final String encodedPassword = encode(config.getString("password"));
+		
+		debug("Using password (urlencoded) '" + encodedPassword + "'");
+		
+		debug("Retrieving player list..");
 		
 		// First get a list of players so we know which player placeholders to send
 		final Map<UUID, String> players;
@@ -56,7 +62,12 @@ public class PlaceholderSender implements Runnable {
 			PingLogger.logFail(address, e.getMessage());
 			return;
 		}
+		
+		debug("Done. (" + players.size() + " players)");
+		players.forEach((uuid, name) -> debug(" - " + uuid + ":" + name));
 	
+		debug("Collecting placeholders..");
+		
 		// Collect placeholders to single map
 		final Map<String, Object> placeholders = new HashMap<>();
 
@@ -76,6 +87,8 @@ public class PlaceholderSender implements Runnable {
 		
 		final String serverName = config.getString("server-name");
 		
+		debug("Sending placeholders using server name '" + serverName + "'");
+		
 		try {
 			sendPlaceholders(address, encodedPassword, serverName, placeholders);
 		} catch (final MalformedURLException e) {
@@ -90,12 +103,15 @@ public class PlaceholderSender implements Runnable {
 		}
 
 		PingLogger.logSuccess(address);
+		
+		debug("Done!");
 	}
 	
 	private void sendPlaceholders(String address, final String encodedPassword, final String serverName,
 			final Map<String, Object> placeholders) throws IOException, PingException {
 		address = "http://" + address;
 		final String json = new Gson().toJson(placeholders).toString();
+		debug("Placeholders json: " + json);
 		final String parameters = String.format("password=%s&server=%s&data=%s",
 				encodedPassword, serverName, this.encode(json));
 
@@ -151,6 +167,12 @@ public class PlaceholderSender implements Runnable {
 			return URLEncoder.encode(object.toString(), "UTF-8");
 		} catch (final UnsupportedEncodingException e) {
 			throw new RuntimeException(e.getMessage());
+		}
+	}
+	
+	private void debug(String message) {
+		if (Main.instance.getConfig().getBoolean("debug", false)) {
+			Main.instance.getLogger().info("[Debug] " + message);
 		}
 	}
 	

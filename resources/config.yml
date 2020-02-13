@@ -13,5 +13,7 @@ server-name: ''
 # value so it doesn't take a long time between requests to a specific server.
 send-interval: 4
 
+debug: false
+
 # don't touch this option unless you know you need to
 password: "a"
