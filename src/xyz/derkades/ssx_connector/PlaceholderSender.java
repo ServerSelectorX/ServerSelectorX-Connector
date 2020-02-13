@@ -70,14 +70,12 @@ public class PlaceholderSender implements Runnable {
 		
 		// Collect placeholders to single map
 		final Map<String, Object> placeholders = new HashMap<>();
-
-		final Map<String, String> playerValues = new HashMap<>();
 		
 		PlaceholderRegistry.forEach(p -> {
 			if (p instanceof PlayerPlaceholder) {
 				final PlayerPlaceholder pp = (PlayerPlaceholder) p;
 				final Map<String, String> map = new HashMap<>();
-				players.forEach((u, n) -> playerValues.put(u.toString(), pp.getValue(u, n)));
+				players.forEach((u, n) -> map.put(u.toString(), pp.getValue(u, n)));
 				placeholders.put(pp.getKey(), map);
 			} else {
 				final GlobalPlaceholder gp = (GlobalPlaceholder) p;
