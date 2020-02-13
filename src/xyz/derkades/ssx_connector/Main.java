@@ -9,21 +9,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
+import java.util.Optional;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin {
-
-	static final Map<String, BiFunction<UUID, String, String>> playerPlaceholders = new ConcurrentHashMap<>();
-	static final Map<String, Supplier<String>> placeholders = new ConcurrentHashMap<>();
-
-	static final Map<Addon, List<String>> addonPlaceholders = new ConcurrentHashMap<>();
-
+	
 	static Main instance;
 
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
@@ -62,9 +55,8 @@ public class Main extends JavaPlugin {
 			this.addons.forEach((a) -> map.put(a.getName(), 1));
 			return map;
 		}));
-
-		placeholders.put("online", () -> String.valueOf(Bukkit.getOnlinePlayers().size()));
-		placeholders.put("max", () -> String.valueOf(Bukkit.getMaxPlayers()));
+		
+		registerCorePlaceholders();
 	}
 
 	private List<Addon> loadAddons() {
@@ -108,15 +100,22 @@ public class Main extends JavaPlugin {
 
 	void reloadAddons() {
 		final List<Addon> addons2 = new ArrayList<>(this.addons);
-		placeholders.clear();
-		playerPlaceholders.clear();
-		addonPlaceholders.clear();
+		PlaceholderRegistry.clear();
 		this.addons.clear();
 		for (final Addon addon : addons2) {
 			addon.reloadConfig();
 			addon.onLoad();
 			this.addons.add(addon);
 		}
+		registerCorePlaceholders();
+	}
+	
+	void registerCorePlaceholders() {
+		PlaceholderRegistry.registerPlaceholder(Optional.empty(), "online",
+				() -> String.valueOf(Bukkit.getOnlinePlayers().size()));
+		
+		PlaceholderRegistry.registerPlaceholder(Optional.empty(), "max",
+				() -> String.valueOf(Bukkit.getMaxPlayers()));
 	}
 
 }

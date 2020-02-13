@@ -1,5 +1,8 @@
 package xyz.derkades.ssx_connector;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -7,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import net.md_5.bungee.api.ChatColor;
 import xyz.derkades.ssx_connector.PingLogger.PingFail;
 import xyz.derkades.ssx_connector.PingLogger.PingSuccess;
+import xyz.derkades.ssx_connector.PlaceholderRegistry.Placeholder;
 
 public class ConnectorCommand implements CommandExecutor {
 
@@ -50,14 +54,20 @@ public class ConnectorCommand implements CommandExecutor {
 				sender.sendMessage("Get a list of installed addons using /ssxc addons");
 				return true;
 			}
+			
+			final Addon addonF = addon;
+			
+			final List<String> placeholders = PlaceholderRegistry.stream()
+					.filter(p -> p.getAddon() == addonF)
+					.map(Placeholder::getKey)
+					.collect(Collectors.toList());
 
-			if (!Main.addonPlaceholders.containsKey(addon)) {
+			if (placeholders.isEmpty()) {
 				sender.sendMessage("This addon has not registered any placeholders.");
 				return true;
 			}
 
-			sender.sendMessage(String.join(", ", Main.addonPlaceholders.get(addon)));
-
+			sender.sendMessage(String.join(", ", placeholders));
 			return true;
 		}
 

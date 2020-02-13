@@ -19,6 +19,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import com.google.gson.Gson;
 
+import xyz.derkades.ssx_connector.PlaceholderRegistry.GlobalPlaceholder;
+import xyz.derkades.ssx_connector.PlaceholderRegistry.PlayerPlaceholder;
+
 public class PlaceholderSender implements Runnable {
 	
 	private final Stack<String> addresses = new Stack<>();
@@ -57,14 +60,18 @@ public class PlaceholderSender implements Runnable {
 		// Collect placeholders to single map
 		final Map<String, Object> placeholders = new HashMap<>();
 
-		Main.placeholders.forEach((k, v) -> placeholders.put(k, v.get()));
-
-		Main.playerPlaceholders.forEach((k, v) -> {
-			final Map<String, String> playerValues = new HashMap<>();
-			players.forEach((uuid, name) -> {
-				playerValues.put(uuid.toString(), v.apply(uuid, name));
-			});
-			placeholders.put(k, playerValues);
+		final Map<String, String> playerValues = new HashMap<>();
+		
+		PlaceholderRegistry.forEach(p -> {
+			if (p instanceof PlayerPlaceholder) {
+				final PlayerPlaceholder pp = (PlayerPlaceholder) p;
+				final Map<String, String> map = new HashMap<>();
+				players.forEach((u, n) -> playerValues.put(u.toString(), pp.getValue(u, n)));
+				placeholders.put(pp.getKey(), map);
+			} else {
+				final GlobalPlaceholder gp = (GlobalPlaceholder) p;
+				placeholders.put(gp.getKey(), gp.getValue());
+			}
 		});
 		
 		final String serverName = config.getString("server-name");

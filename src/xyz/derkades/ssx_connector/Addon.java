@@ -1,8 +1,7 @@
 package xyz.derkades.ssx_connector;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -35,24 +34,12 @@ public abstract class Addon implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, this.plugin);
 	}
 
-	protected void addPlaceholder(final String key, final Supplier<String> placeholder) {
-		Main.placeholders.put(key, placeholder);
-		this.addToList(key);
+	protected void addPlaceholder(final String key, final Supplier<String> valueSupplier) {
+		PlaceholderRegistry.registerPlaceholder(Optional.of(this), key, valueSupplier);
 	}
 
-	protected void addPlayerPlaceholder(final String key, final BiFunction<UUID, String, String> placeholder) {
-		Main.playerPlaceholders.put(key, placeholder);
-		this.addToList(key);
-	}
-
-	private void addToList(final String placeholder) {
-		if (Main.addonPlaceholders.containsKey(this)) {
-			Main.addonPlaceholders.get(this).add(placeholder);
-		} else {
-			final List<String> list = new ArrayList<>();
-			list.add(placeholder);
-			Main.addonPlaceholders.put(this, list);
-		}
+	protected void addPlayerPlaceholder(final String key, final BiFunction<UUID, String, String> valueFunction) {
+		PlaceholderRegistry.registerPlaceholder(Optional.of(this), key, valueFunction);
 	}
 
 	void reloadConfig() {
