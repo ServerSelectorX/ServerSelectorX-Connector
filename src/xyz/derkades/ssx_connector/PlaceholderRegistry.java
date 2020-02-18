@@ -1,12 +1,19 @@
 package xyz.derkades.ssx_connector;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.bukkit.Bukkit;
+
+import xyz.derkades.derkutils.caching.Cache;
 
 public class PlaceholderRegistry {
 	
@@ -41,6 +48,47 @@ public class PlaceholderRegistry {
 	
 	public static Stream<Placeholder> stream() {
 		return placeholders.stream();
+	}
+	
+	static void collectPlaceholders(final Map<UUID, String> players, final Consumer<Map<String, Object>> consumer) {
+		final List<String> async = Main.instance.getConfig().getStringList("async");
+		
+		final Map<String, Object> placeholders = new HashMap<>();
+		
+		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
+			stream().filter((p) -> async.contains(p.getKey())).forEach(p ->
+					placeholders.put(p.getKey(), getValue(p, players)));
+			
+			Bukkit.getScheduler().runTask(Main.instance, () -> {
+				stream().filter((p) -> !placeholders.containsKey(p.getKey())).forEach(p ->
+						placeholders.put(p.getKey(), getValue(p, players)));
+			});
+			
+			consumer.accept(placeholders);
+		});
+	}
+	
+	static Object getValue(final Placeholder placeholder, final Map<UUID, String> players) {
+		final String key = placeholder.getKey();
+		
+		final Object cache = Cache.getCachedObject(key);
+		if (cache != null) {
+			return cache;
+		}
+		
+		final Object value;
+		
+		if (placeholder instanceof PlayerPlaceholder) {
+			value = players.entrySet().stream().collect(Collectors.toMap(
+							e -> key,
+							e -> ((PlayerPlaceholder) placeholder).getValue(e.getKey(), e.getValue())));
+		} else {
+			value = ((GlobalPlaceholder) placeholder).getValue();
+		}
+		
+		final int timeout = Main.instance.getConfig().getInt("cache." + key, 1);
+		Cache.addCachedObject("ssxcplaceholder", value, timeout);
+		return value;
 	}
 	
 	public static class PlayerPlaceholder extends Placeholder {

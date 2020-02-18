@@ -19,9 +19,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 
 import com.google.gson.Gson;
 
-import xyz.derkades.ssx_connector.PlaceholderRegistry.GlobalPlaceholder;
-import xyz.derkades.ssx_connector.PlaceholderRegistry.PlayerPlaceholder;
-
 public class PlaceholderSender implements Runnable {
 	
 	private final Stack<String> addresses = new Stack<>();
@@ -68,41 +65,28 @@ public class PlaceholderSender implements Runnable {
 	
 		debug("Collecting placeholders..");
 		
-		// Collect placeholders to single map
-		final Map<String, Object> placeholders = new HashMap<>();
-		
-		PlaceholderRegistry.forEach(p -> {
-			if (p instanceof PlayerPlaceholder) {
-				final PlayerPlaceholder pp = (PlayerPlaceholder) p;
-				final Map<String, String> map = new HashMap<>();
-				players.forEach((u, n) -> map.put(u.toString(), pp.getValue(u, n)));
-				placeholders.put(pp.getKey(), map);
-			} else {
-				final GlobalPlaceholder gp = (GlobalPlaceholder) p;
-				placeholders.put(gp.getKey(), gp.getValue());
+		PlaceholderRegistry.collectPlaceholders(players, (placeholders) -> {
+			final String serverName = config.getString("server-name");
+			
+			debug("Sending placeholders using server name '" + serverName + "'");
+			
+			try {
+				sendPlaceholders(address, encodedPassword, serverName, placeholders);
+			} catch (final MalformedURLException e) {
+				PingLogger.logFail(address, "Invalid address");
+				return;
+			} catch (final IOException e) {
+				PingLogger.logFail(address, "IOException:" + e.getMessage());
+				return;
+			} catch (final PingException e) {
+				PingLogger.logFail(address, e.getMessage());
+				return;
 			}
-		});
-		
-		final String serverName = config.getString("server-name");
-		
-		debug("Sending placeholders using server name '" + serverName + "'");
-		
-		try {
-			sendPlaceholders(address, encodedPassword, serverName, placeholders);
-		} catch (final MalformedURLException e) {
-			PingLogger.logFail(address, "Invalid address");
-			return;
-		} catch (final IOException e) {
-			PingLogger.logFail(address, "IOException:" + e.getMessage());
-			return;
-		} catch (final PingException e) {
-			PingLogger.logFail(address, e.getMessage());
-			return;
-		}
 
-		PingLogger.logSuccess(address);
-		
-		debug("Done!");
+			PingLogger.logSuccess(address);
+			
+			debug("Done!");
+		});
 	}
 	
 	private void sendPlaceholders(String address, final String encodedPassword, final String serverName,
@@ -168,7 +152,7 @@ public class PlaceholderSender implements Runnable {
 		}
 	}
 	
-	private void debug(String message) {
+	private void debug(final String message) {
 		if (Main.instance.getConfig().getBoolean("debug", false)) {
 			Main.instance.getLogger().info("[Debug] " + message);
 		}

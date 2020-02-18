@@ -13,5 +13,13 @@ send-interval: 2
 
 debug: false
 
+# Cache placeholders for some amount of seconds
+#cache:
+#  placeholdername: 10
+
+# Retrieve some placeholders asynchronously.
+# async:
+#  - placeholdername
+
 # don't touch this option unless you know you need to
 password: "a"
