@@ -71,7 +71,7 @@ public class PlaceholderRegistry {
 	static Object getValue(final Placeholder placeholder, final Map<UUID, String> players) {
 		final String key = placeholder.getKey();
 		
-		final Object cache = Cache.getCachedObject(key);
+		final Object cache = Cache.getCachedObject("ssxcplaceholder" + key);
 		if (cache != null) {
 			return cache;
 		}
@@ -87,7 +87,7 @@ public class PlaceholderRegistry {
 		}
 		
 		final int timeout = Main.instance.getConfig().getInt("cache." + key, 1);
-		Cache.addCachedObject("ssxcplaceholder", value, timeout);
+		Cache.addCachedObject("ssxcplaceholder" + key, value, timeout);
 		return value;
 	}
 	
