@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import com.google.gson.Gson;
@@ -65,28 +66,30 @@ public class PlaceholderSender implements Runnable {
 	
 		debug("Collecting placeholders..");
 		
-		PlaceholderRegistry.collectPlaceholders(players, (placeholders) -> {
-			final String serverName = config.getString("server-name");
-			
-			debug("Sending placeholders using server name '" + serverName + "'");
-			
-			try {
-				sendPlaceholders(address, encodedPassword, serverName, placeholders);
-			} catch (final MalformedURLException e) {
-				PingLogger.logFail(address, "Invalid address");
-				return;
-			} catch (final IOException e) {
-				PingLogger.logFail(address, "IOException:" + e.getMessage());
-				return;
-			} catch (final PingException e) {
-				PingLogger.logFail(address, e.getMessage());
-				return;
-			}
-
-			PingLogger.logSuccess(address);
-			
-			debug("Done!");
-		});
+		PlaceholderRegistry.collectPlaceholders(players, placeholders ->
+			// Go async to send placeholders
+			Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
+				final String serverName = config.getString("server-name");
+				
+				debug("Sending placeholders using server name '" + serverName + "'");
+				
+				try {
+					sendPlaceholders(address, encodedPassword, serverName, placeholders);
+				} catch (final MalformedURLException e) {
+					PingLogger.logFail(address, "Invalid address");
+					return;
+				} catch (final IOException e) {
+					PingLogger.logFail(address, "IOException:" + e.getMessage());
+					return;
+				} catch (final PingException e) {
+					PingLogger.logFail(address, e.getMessage());
+					return;
+				}
+	
+				PingLogger.logSuccess(address);
+				
+				debug("Done!");
+		}));
 	}
 	
 	private void sendPlaceholders(String address, final String encodedPassword, final String serverName,
