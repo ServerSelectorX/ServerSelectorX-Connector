@@ -79,10 +79,12 @@ public class PlaceholderRegistry {
 		final Object value;
 		
 		if (placeholder instanceof PlayerPlaceholder) {
+			Main.placeholders += players.size();
 			value = players.entrySet().stream().collect(Collectors.toMap(
 							e -> key,
 							e -> ((PlayerPlaceholder) placeholder).getValue(e.getKey(), e.getValue())));
 		} else {
+			Main.placeholders++;
 			value = ((GlobalPlaceholder) placeholder).getValue();
 		}
 		

@@ -19,6 +19,11 @@ import org.bukkit.scheduler.BukkitTask;
 public class Main extends JavaPlugin {
 	
 	static Main instance;
+	
+	/*
+	 * Used for measuring the amount of placeholders collected
+	 */
+	static int placeholders = 0;
 
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
 
@@ -105,15 +110,15 @@ public class Main extends JavaPlugin {
 	}
 	
 	void restartPingTask() {
-		if (pingTask != null) {
-			pingTask.cancel();
+		if (this.pingTask != null) {
+			this.pingTask.cancel();
 		}
 		
-		int addresses = getConfig().getStringList("addresses").size();
-		int interval = getConfig().getInt("send-interval");
-		int taskIntervalTicks = interval / addresses * 20;
+		final int addresses = getConfig().getStringList("addresses").size();
+		final int interval = getConfig().getInt("send-interval");
+		final int taskIntervalTicks = interval / addresses * 20;
 		
-		pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 40, taskIntervalTicks);
+		this.pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 40, taskIntervalTicks);
 	}
 	
 	private void registerMetrics() {

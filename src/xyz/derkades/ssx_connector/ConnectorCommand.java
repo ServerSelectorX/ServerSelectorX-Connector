@@ -3,6 +3,7 @@ package xyz.derkades.ssx_connector;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -88,6 +89,27 @@ public class ConnectorCommand implements CommandExecutor {
 				});
 			}
 			return true;
+		}
+		
+		if ((args.length == 1 || args.length == 2) &&
+				args[0].equals("collectioncount") && sender.hasPermission("ssxc.collectioncount")) {
+			final int seconds;
+			if (args.length == 2) {
+				try {
+					seconds = Integer.parseInt(args[1]);
+				} catch (final NumberFormatException e) {
+					sender.sendMessage("Invalid number '" + args[1] + "'");
+					return true;
+				}
+			} else {
+				seconds = 5;
+			}
+			
+			sender.sendMessage("Measuring average placeholders per second over a period of " + seconds + " seconds..");
+			Main.placeholders = 0;
+			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, () -> {
+				sender.sendMessage("Placeholders sent: " + Main.placeholders + " (" + Main.placeholders/seconds + "/s)");
+			}, seconds * 20);
 		}
 
 		return false;
