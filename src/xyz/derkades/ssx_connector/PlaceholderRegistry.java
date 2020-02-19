@@ -62,9 +62,9 @@ public class PlaceholderRegistry {
 			Bukkit.getScheduler().runTask(Main.instance, () -> {
 				stream().filter((p) -> !placeholders.containsKey(p.getKey())).forEach(p ->
 						placeholders.put(p.getKey(), getValue(p, players)));
+				
+				consumer.accept(placeholders);
 			});
-			
-			consumer.accept(placeholders);
 		});
 	}
 	
