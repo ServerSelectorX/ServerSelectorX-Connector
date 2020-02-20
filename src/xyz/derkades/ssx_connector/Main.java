@@ -24,6 +24,7 @@ public class Main extends JavaPlugin {
 	 * Used for measuring the amount of placeholders collected
 	 */
 	static int placeholders = 0;
+	static int placeholdersCached = 0;
 
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
 

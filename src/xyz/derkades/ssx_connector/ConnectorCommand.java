@@ -108,7 +108,10 @@ public class ConnectorCommand implements CommandExecutor {
 			sender.sendMessage("Measuring average placeholders per second over a period of " + seconds + " seconds..");
 			Main.placeholders = 0;
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, () -> {
-				sender.sendMessage("Placeholders sent: " + Main.placeholders + " (" + Main.placeholders/seconds + "/s)");
+				sender.sendMessage("Placeholders collected: " + Main.placeholders + " (" + Main.placeholders/seconds + "/s)");
+				sender.sendMessage("Placeholders from cache: " + Main.placeholdersCached + " (" + Main.placeholdersCached/seconds + "/s)");
+				sender.sendMessage("Total placeholders sent: " + (Main.placeholders+Main.placeholdersCached) + " (" + (Main.placeholders+Main.placeholdersCached)/seconds + "/s)");
+				sender.sendMessage(String.format("Cache ratio: %.1f%%", 100 - ((float) Main.placeholders / (Main.placeholdersCached > 0 ? Main.placeholdersCached : 1)) * 100));
 			}, seconds * 20);
 			return true;
 		}

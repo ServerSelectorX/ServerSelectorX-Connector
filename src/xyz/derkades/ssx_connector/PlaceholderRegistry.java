@@ -73,6 +73,12 @@ public class PlaceholderRegistry {
 		
 		final Object cache = Cache.getCachedObject("ssxcplaceholder" + key);
 		if (cache != null) {
+			if (placeholder instanceof PlayerPlaceholder) {
+				Main.placeholdersCached += players.size();
+			} else {
+				Main.placeholdersCached++;
+			}
+			
 			return cache;
 		}
 		
