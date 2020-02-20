@@ -110,6 +110,7 @@ public class ConnectorCommand implements CommandExecutor {
 			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, () -> {
 				sender.sendMessage("Placeholders sent: " + Main.placeholders + " (" + Main.placeholders/seconds + "/s)");
 			}, seconds * 20);
+			return true;
 		}
 
 		return false;
