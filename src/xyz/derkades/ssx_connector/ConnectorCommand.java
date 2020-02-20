@@ -92,7 +92,7 @@ public class ConnectorCommand implements CommandExecutor {
 		}
 		
 		if ((args.length == 1 || args.length == 2) &&
-				args[0].equals("collectioncount") && sender.hasPermission("ssxc.collectioncount")) {
+				args[0].equals("count") && sender.hasPermission("ssxc.count")) {
 			final int seconds;
 			if (args.length == 2) {
 				try {
