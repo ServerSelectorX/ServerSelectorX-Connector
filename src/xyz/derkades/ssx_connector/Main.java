@@ -17,9 +17,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
 public class Main extends JavaPlugin {
-	
+
 	static Main instance;
-	
+
 	/*
 	 * Used for measuring the amount of placeholders collected
 	 */
@@ -29,7 +29,7 @@ public class Main extends JavaPlugin {
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
 
 	List<Addon> addons;
-	
+
 	private BukkitTask pingTask = null;
 
 	@Override
@@ -45,9 +45,9 @@ public class Main extends JavaPlugin {
 		this.getCommand("ssxc").setExecutor(new ConnectorCommand());
 
 		restartPingTask();
-		
+
 		registerCorePlaceholders();
-		
+
 		registerMetrics();
 	}
 
@@ -60,7 +60,7 @@ public class Main extends JavaPlugin {
 
 		for (final File addonFile : addonsFolder.listFiles()) {
 			if (addonFile.isDirectory()) {
-				this.getLogger().warning("Skipped directory " + addonFile.getPath() + "in addons directory. There should not be any directories in the addon directory.");
+				this.getLogger().warning("Skipped directory " + addonFile.getPath() + " in addons directory. There should not be any directories in the addon directory.");
 				continue;
 			}
 
@@ -101,27 +101,27 @@ public class Main extends JavaPlugin {
 		}
 		registerCorePlaceholders();
 	}
-	
+
 	void registerCorePlaceholders() {
 		PlaceholderRegistry.registerPlaceholder(Optional.empty(), "online",
 				() -> String.valueOf(Bukkit.getOnlinePlayers().size()));
-		
+
 		PlaceholderRegistry.registerPlaceholder(Optional.empty(), "max",
 				() -> String.valueOf(Bukkit.getMaxPlayers()));
 	}
-	
+
 	void restartPingTask() {
 		if (this.pingTask != null) {
 			this.pingTask.cancel();
 		}
-		
+
 		final int addresses = getConfig().getStringList("addresses").size();
 		final int interval = getConfig().getInt("send-interval");
 		final int taskIntervalTicks = interval / addresses * 20;
-		
+
 		this.pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 40, taskIntervalTicks);
 	}
-	
+
 	private void registerMetrics() {
 		final Metrics metrics = new Metrics(this, 3000);
 
