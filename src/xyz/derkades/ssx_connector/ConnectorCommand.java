@@ -59,6 +59,7 @@ public class ConnectorCommand implements CommandExecutor {
 			final Addon addonF = addon;
 			
 			final List<String> placeholders = PlaceholderRegistry.stream()
+					.filter(p -> p.isFromAddon())
 					.filter(p -> p.getAddon() == addonF)
 					.map(Placeholder::getKey)
 					.collect(Collectors.toList());
