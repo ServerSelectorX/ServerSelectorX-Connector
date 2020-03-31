@@ -21,6 +21,7 @@ public class ConnectorCommand implements CommandExecutor {
 			Main.instance.reloadConfig();
 			Main.instance.reloadAddons();
 			Main.instance.restartPingTask();
+			PingLogger.clear();
 			sender.sendMessage("The plugin configuration file and addon configuration files have been reloaded. A complete server reload or restart is required for the (de)installation of addons.");
 			return true;
 		}

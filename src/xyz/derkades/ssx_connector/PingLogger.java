@@ -31,6 +31,10 @@ public class PingLogger {
 		map.forEach(consumer);
 	}
 	
+	public static void clear() {
+		map.clear();
+	}
+	
 	public static final class PingFail extends PingStatus {
 		
 		private final String message;
