@@ -35,7 +35,7 @@ public class PlaceholderSender implements Runnable {
 			config.getStringList("addresses").forEach(this.addresses::push);
 		}
 		
-		final String address = this.addresses.pop();
+		final String address = this.addresses.pop().trim();
 		
 		debug("Preparing to send data to " + address);
 		
