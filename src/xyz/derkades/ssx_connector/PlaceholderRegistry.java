@@ -94,8 +94,11 @@ public class PlaceholderRegistry {
 			value = ((GlobalPlaceholder) placeholder).getValue();
 		}
 		
-		final int timeout = Main.instance.getConfig().getInt("cache." + key, 1);
-		Cache.addCachedObject("ssxcplaceholder" + key, value, timeout);
+		final boolean cachingEnabled = Main.instance.getConfig().getBoolean("enable-caching", true);
+		final int timeout =  Main.instance.getConfig().getInt("cache." + key, 1);
+		if (cachingEnabled && timeout > 0) {
+			Cache.addCachedObject("ssxcplaceholder" + key, value, timeout);
+		}
 		return value;
 	}
 	
