@@ -13,7 +13,7 @@ send-interval: 2
 
 debug: false
 
-# Cache placeholders for some amount of seconds
+# Cache placeholders for some amount of seconds. Set to 0 to disable caching.
 #cache:
 #  placeholdername: 10
 
