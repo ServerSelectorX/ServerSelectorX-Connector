@@ -79,7 +79,7 @@ public class PlaceholderSender implements Runnable {
 					PingLogger.logFail(address, "Invalid address");
 					return;
 				} catch (final IOException e) {
-					PingLogger.logFail(address, "IOException:" + e.getMessage());
+					PingLogger.logFail(address, "IOException: " + e.getMessage());
 					return;
 				} catch (final PingException e) {
 					PingLogger.logFail(address, e.getMessage());
