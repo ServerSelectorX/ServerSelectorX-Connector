@@ -61,18 +61,32 @@
 					<relocations>
 						<relocation>
 							<pattern>org.bstats.bukkit</pattern>
-							<shadedPattern>xyz.derkades.ssx_connector.ext.bstats</shadedPattern>
+							<shadedPattern>xyz.derkades.ssx_connector.lib.bstats</shadedPattern>
+						</relocation>
+						<relocation>
+							<pattern>xyz.derkades.derkutils</pattern>
+							<shadedPattern>xyz.derkades.ssx_connector.lib.derkutils</shadedPattern>
+						</relocation>
+						<relocation>
+							<pattern>com.google.gson</pattern>
+							<shadedPattern>xyz.derkades.ssx_connector.lib.gson</shadedPattern>
 						</relocation>
 					</relocations>
 
-					<artifactSet>
-						<excludes>
-							<exclude>org.apache.commons:commons-lang3</exclude>
-							<exclude>org.bukkit:bukkit</exclude>
-							<exclude>org.yaml:snakeyaml</exclude>
-							<exclude>commons-lang:commons-lang</exclude>
-						</excludes>
-					</artifactSet>
+					<filters>
+						<filter>
+							<artifact>*:*</artifact>
+							<excludes>
+								<exclude>META-INF/LICENSE.txt</exclude>
+								<exclude>META-INF/NOTICE.txt</exclude>
+								<exclude>META-INF/maven/</exclude>
+								<exclude>LICENSE.txt</exclude>
+								<exclude>junit/</exclude>
+								<exclude>org/hamcrest/</exclude>
+								<exclude>org/junit/</exclude>
+							</excludes>
+						</filter>
+					</filters>
 				</configuration>
 			</plugin>
 
@@ -98,7 +112,6 @@
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
 			<version>1.7</version>
-			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
