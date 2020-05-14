@@ -69,28 +69,13 @@ public class PlaceholderRegistry {
 	}
 	
 	static Object getValue(final Placeholder placeholder, final Map<UUID, String> players) {
-		final String key = placeholder.getKey();
-		
-		final Object cache = Cache.getCachedObject("ssxcplaceholder" + key);
-		if (cache != null) {
-			if (placeholder instanceof PlayerPlaceholder) {
-				Main.placeholdersCached += players.size();
-			} else {
-				Main.placeholdersCached++;
-			}
-			
-			return cache;
-		}
-		
 		final Object value;
 		
 		if (placeholder instanceof PlayerPlaceholder) {
-			Main.placeholders += players.size();
 			value = players.entrySet().stream().collect(Collectors.toMap(
 							e -> e.getKey(),
 							e -> ((PlayerPlaceholder) placeholder).getValue(e.getKey(), e.getValue())));
 		} else {
-			Main.placeholders++;
 			value = ((GlobalPlaceholder) placeholder).getValue();
 		}
 		
@@ -100,12 +85,6 @@ public class PlaceholderRegistry {
 			} else {
 				Main.instance.getLogger().warning(String.format("Placeholder %s is null! This is either a bug in the plugin that registered it or a configuration issue.", placeholder.getKey()));
 			}
-		}
-		
-		final boolean cachingEnabled = Main.instance.getConfig().getBoolean("enable-caching", true);
-		final int timeout =  Main.instance.getConfig().getInt("cache." + key, 1);
-		if (cachingEnabled && timeout > 0) {
-			Cache.addCachedObject("ssxcplaceholder" + key, value, timeout);
 		}
 		
 		return value;
@@ -121,7 +100,21 @@ public class PlaceholderRegistry {
 		}
 		
 		public String getValue(final UUID uuid, final String name) {
-			return this.function.apply(uuid, name);
+			Main.placeholders++;
+			if (Main.cacheEnabled) {
+				final Object cache = Cache.getCachedObject("ssxplaceholder" + name + this.getKey());
+				if (cache == null) {
+					final String value = this.function.apply(uuid, name);
+					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), 1);
+					Cache.addCachedObject("ssxplaceholder" + name + this.getKey(), value, timeout);
+					return value;
+				} else {
+					Main.placeholdersCached++;
+					return (String) cache;
+				}
+			} else {
+				return this.function.apply(uuid, name);
+			}
 		}
 		
 	}
@@ -136,7 +129,21 @@ public class PlaceholderRegistry {
 		}
 		
 		public String getValue() {
-			return this.valueSupplier.get();
+			Main.placeholders++;
+			if (Main.cacheEnabled) {
+				final Object cache = Cache.getCachedObject("ssxplaceholder" + this.getKey());
+				if (cache == null) {
+					final String value = this.valueSupplier.get();
+					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), 1);
+					Cache.addCachedObject("ssxplaceholder" + this.getKey(), value, timeout);
+					return value;
+				} else {
+					Main.placeholdersCached++;
+					return (String) cache;
+				}
+			} else {
+				return this.valueSupplier.get();
+			}
 		}
 		
 	}

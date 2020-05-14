@@ -25,6 +25,8 @@ public class Main extends JavaPlugin {
 	 */
 	static int placeholders = 0;
 	static int placeholdersCached = 0;
+	
+	static boolean cacheEnabled = true;
 
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
 
@@ -120,6 +122,12 @@ public class Main extends JavaPlugin {
 		final int taskIntervalTicks = interval / addresses * 20;
 
 		this.pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 40, taskIntervalTicks);
+	}
+	
+	@Override
+	public void reloadConfig() {
+		super.reloadConfig();
+		cacheEnabled = getConfig().getBoolean("enable-caching", true);
 	}
 
 	private void registerMetrics() {
