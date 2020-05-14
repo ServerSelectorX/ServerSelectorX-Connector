@@ -28,15 +28,6 @@ public class PlaceholderSender implements Runnable {
 	public void run() {
 		final FileConfiguration config = Main.instance.getConfig();
 		
-		final String serverName = config.getString("server-name");
-		
-		debug("Sending placeholders using server name '" + serverName + "'");
-		
-		if (serverName.isBlank()) {
-			debug("Server name is empty! Not sending data");
-			return;
-		}
-		
 		// Only send request to one address every time. When requests have been
 		// sent to all addresses, repopulate the stack so the cycle can start over.
 		
@@ -51,13 +42,22 @@ public class PlaceholderSender implements Runnable {
 		
 		final String address = this.addresses.pop().trim();
 		
-		debug("Preparing to send data to " + address);
+		debug(address, "Preparing to send data");
+		
+		final String serverName = config.getString("server-name");
+		
+		debug(address, "Using server name '" + serverName + "'");
+		
+		if (serverName.isBlank()) {
+			debug(address, "Server name is empty! Not sending data");
+			return;
+		}
 		
 		final String encodedPassword = encode(config.getString("password"));
 		
-		debug("Using password (urlencoded) '" + encodedPassword + "'");
+		debug(address, "Using password (urlencoded) '" + encodedPassword + "'");
 		
-		debug("Retrieving player list..");
+		debug(address, "Retrieving player list..");
 		
 		// First get a list of players so we know which player placeholders to send
 		final Map<UUID, String> players;
@@ -75,10 +75,10 @@ public class PlaceholderSender implements Runnable {
 			return;
 		}
 		
-		debug("Done. (" + players.size() + " players)");
-		players.forEach((uuid, name) -> debug(" - " + uuid + ":" + name));
+		debug(address, "Done. (" + players.size() + " players)");
+		players.forEach((uuid, name) -> debug(address, " - " + uuid + ":" + name));
 	
-		debug("Collecting placeholders..");
+		debug(address, "Collecting placeholders..");
 		
 		PlaceholderRegistry.collectPlaceholders(players, placeholders ->
 			// Go async to send placeholders
@@ -98,19 +98,18 @@ public class PlaceholderSender implements Runnable {
 	
 				PingLogger.logSuccess(address);
 				
-				debug("Done!");
+				debug(address, "Done!");
 		}));
 	}
 	
-	private void sendPlaceholders(String address, final String encodedPassword, final String serverName,
+	private void sendPlaceholders(final String address, final String encodedPassword, final String serverName,
 			final Map<String, Object> placeholders) throws IOException, PingException {
-		address = "http://" + address;
 		final String json = new Gson().toJson(placeholders).toString();
-		debug("Placeholders json: " + json);
+		debug(address, "Placeholders json: " + json);
 		final String parameters = String.format("password=%s&server=%s&data=%s",
 				encodedPassword, serverName, this.encode(json));
 
-		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
+		final HttpURLConnection connection = (HttpURLConnection) new URL("http://" + address).openConnection();
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Length", parameters.length() + "");
 		connection.setDoOutput(true);
@@ -165,9 +164,9 @@ public class PlaceholderSender implements Runnable {
 		}
 	}
 	
-	private void debug(final String message) {
+	private void debug(final String address, final String message) {
 		if (Main.instance.getConfig().getBoolean("debug", false)) {
-			Main.instance.getLogger().info("[Debug] " + message);
+			Main.instance.getLogger().info("[Debug] " + address + " - " + message);
 		}
 	}
 	
