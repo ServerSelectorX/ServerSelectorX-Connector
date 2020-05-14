@@ -28,6 +28,15 @@ public class PlaceholderSender implements Runnable {
 	public void run() {
 		final FileConfiguration config = Main.instance.getConfig();
 		
+		final String serverName = config.getString("server-name");
+		
+		debug("Sending placeholders using server name '" + serverName + "'");
+		
+		if (serverName.isBlank()) {
+			debug("Server name is empty! Not sending data");
+			return;
+		}
+		
 		// Only send request to one address every time. When requests have been
 		// sent to all addresses, repopulate the stack so the cycle can start over.
 		
@@ -74,10 +83,6 @@ public class PlaceholderSender implements Runnable {
 		PlaceholderRegistry.collectPlaceholders(players, placeholders ->
 			// Go async to send placeholders
 			Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
-				final String serverName = config.getString("server-name");
-				
-				debug("Sending placeholders using server name '" + serverName + "'");
-				
 				try {
 					sendPlaceholders(address, encodedPassword, serverName, placeholders);
 				} catch (final MalformedURLException e) {

@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.FileConfiguration;
 
 import net.md_5.bungee.api.ChatColor;
 import xyz.derkades.ssx_connector.PingLogger.PingFail;
@@ -75,8 +76,14 @@ public class ConnectorCommand implements CommandExecutor {
 		}
 
 		if (args.length == 1 && args[0].equals("status") && sender.hasPermission("ssxc.status")) {
-			if (Main.instance.getConfig().getStringList("addresses").isEmpty()) {
+			final FileConfiguration config = Main.instance.getConfig();
+			if (config.getStringList("addresses").isEmpty()) {
 				sender.sendMessage("No addresses configured in config.yml, not sending data");
+				return true;
+			}
+			
+			if (config.getString("server-name").isBlank()) {
+				sender.sendMessage("The server-name option is blank, not sending data");
 				return true;
 			}
 			
