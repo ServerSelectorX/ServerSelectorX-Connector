@@ -16,6 +16,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
 
+import xyz.derkades.derkutils.caching.Cache;
+
 public class Main extends JavaPlugin {
 
 	static Main instance;
@@ -51,6 +53,13 @@ public class Main extends JavaPlugin {
 		registerCorePlaceholders();
 
 		registerMetrics();
+		
+		getServer().getScheduler().runTaskTimer(this, () -> {
+			final long start = System.currentTimeMillis();
+			final int i = Cache.cleanCache();
+			final long diff = System.currentTimeMillis() - start;
+			getLogger().info("Cleaned cache, removed " + i + " entries in " + diff + " ms.");
+		}, 60*60*20, 60*60*20);
 	}
 
 	private List<Addon> loadAddons() {
