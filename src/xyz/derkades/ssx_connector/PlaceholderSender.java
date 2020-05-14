@@ -48,7 +48,7 @@ public class PlaceholderSender implements Runnable {
 		
 		debug(address, "Using server name '" + serverName + "'");
 		
-		if (serverName.isBlank()) {
+		if (serverName.isEmpty()) {
 			debug(address, "Server name is empty! Not sending data");
 			return;
 		}

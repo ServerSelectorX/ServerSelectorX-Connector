@@ -82,7 +82,7 @@ public class ConnectorCommand implements CommandExecutor {
 				return true;
 			}
 			
-			if (config.getString("server-name").isBlank()) {
+			if (config.getString("server-name").isEmpty()) {
 				sender.sendMessage("The server-name option is blank, not sending data");
 				return true;
 			}
