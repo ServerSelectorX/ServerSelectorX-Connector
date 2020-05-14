@@ -33,6 +33,11 @@ public class PlaceholderSender implements Runnable {
 		
 		if (this.addresses.isEmpty()) {
 			config.getStringList("addresses").forEach(this.addresses::push);
+			
+			// If the user did not configure any addresses
+			if (this.addresses.isEmpty()) {
+				return;
+			}
 		}
 		
 		final String address = this.addresses.pop().trim();

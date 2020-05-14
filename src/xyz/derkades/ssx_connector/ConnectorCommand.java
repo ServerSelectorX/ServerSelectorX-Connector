@@ -75,6 +75,11 @@ public class ConnectorCommand implements CommandExecutor {
 		}
 
 		if (args.length == 1 && args[0].equals("status") && sender.hasPermission("ssxc.status")) {
+			if (Main.instance.getConfig().getStringList("addresses").isEmpty()) {
+				sender.sendMessage("No addresses configured in config.yml, not sending data");
+				return true;
+			}
+			
 			if (PingLogger.isEmpty()) {
 				sender.sendMessage("No data has been sent to servers");
 			} else {
