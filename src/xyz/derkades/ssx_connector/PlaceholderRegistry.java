@@ -94,11 +94,20 @@ public class PlaceholderRegistry {
 			value = ((GlobalPlaceholder) placeholder).getValue();
 		}
 		
+		if (value == null) {
+			if (placeholder.isFromAddon()) {
+				Main.instance.getLogger().warning(String.format("Placeholder %s from addon %s is null! This is either an addon bug or addon configuration issue.", placeholder.getKey(), placeholder.getAddon()));
+			} else {
+				Main.instance.getLogger().warning(String.format("Placeholder %s is null! This is either a bug in the plugin that registered it or a configuration issue.", placeholder.getKey()));
+			}
+		}
+		
 		final boolean cachingEnabled = Main.instance.getConfig().getBoolean("enable-caching", true);
 		final int timeout =  Main.instance.getConfig().getInt("cache." + key, 1);
 		if (cachingEnabled && timeout > 0) {
 			Cache.addCachedObject("ssxcplaceholder" + key, value, timeout);
 		}
+		
 		return value;
 	}
 	
