@@ -17,7 +17,9 @@ debug: false
 #cache:
 #  placeholdername: 10
 
-# Retrieve some placeholders asynchronously.
+# Retrieve some placeholders asynchronously. Use with caution, only use with plugins that
+# can handle being called async. Especially if you use this with placeholders related to
+# players or worlds, stuff can break.
 # async:
 #  - placeholdername
 
