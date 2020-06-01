@@ -9,7 +9,7 @@ server-name: ''
 # How often the connector plugin sends placeholders (4 means once every 4 seconds)
 # If you have multiple servers, it will ping them in order. The interval between each server is
 # the send interval divided by the number of addresses. (4 addresses / send-interval 2 = interval 0.5 seconds)
-send-interval: 2
+send-interval: 4
 
 debug: false
 
