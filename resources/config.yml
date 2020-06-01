@@ -6,9 +6,10 @@ addresses:
 # Set this to the name of this server EXACTLY as specified in the bungeecord config.
 server-name: ''
 
-# How often the connector plugin sends placeholders (4 means once every 4 seconds)
-# If you have multiple servers, it will ping them in order. The interval between each server is
-# the send interval divided by the number of addresses. (4 addresses / send-interval 2 = interval 0.5 seconds)
+# How often the connector plugin sends placeholders, in seconds.
+# If you have multiple servers, the plugin will ping all servers within this time,
+# with a roughly consistent interval. For example:
+# send-interval 2 / 4 addresses = every 0.5 seconds sending data to a server
 send-interval: 4
 
 debug: false
