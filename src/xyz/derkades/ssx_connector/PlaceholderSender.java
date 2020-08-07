@@ -53,17 +53,13 @@ public class PlaceholderSender implements Runnable {
 			return;
 		}
 		
-		final String encodedPassword = encode(config.getString("password"));
-		
-		debug(address, "Using password (urlencoded) '" + encodedPassword + "'");
-		
 		debug(address, "Retrieving player list..");
 		
 		// First get a list of players so we know which player placeholders to send
 		final Map<UUID, String> players;
 		
 		try {
-			players = getPlayerList(address, encodedPassword);
+			players = getPlayerList(address);
 		} catch (final MalformedURLException e) {
 			PingLogger.logFail(address, "Invalid address");
 			return;
@@ -84,7 +80,7 @@ public class PlaceholderSender implements Runnable {
 			// Go async to send placeholders
 			Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
 				try {
-					sendPlaceholders(address, encodedPassword, serverName, placeholders);
+					sendPlaceholders(address, serverName, placeholders);
 				} catch (final MalformedURLException e) {
 					PingLogger.logFail(address, "Invalid address");
 					return;
@@ -102,12 +98,11 @@ public class PlaceholderSender implements Runnable {
 		}));
 	}
 	
-	private void sendPlaceholders(final String address, final String encodedPassword, final String serverName,
+	private void sendPlaceholders(final String address, final String serverName,
 			final Map<String, Object> placeholders) throws IOException, PingException {
 		final String json = new Gson().toJson(placeholders).toString();
 		debug(address, "Placeholders json: " + json);
-		final String parameters = String.format("password=%s&server=%s&data=%s",
-				encodedPassword, serverName, this.encode(json));
+		final String parameters = String.format("password=%s&server=%s&data=%s", serverName, this.encode(json));
 
 		final HttpURLConnection connection = (HttpURLConnection) new URL("http://" + address).openConnection();
 		connection.setRequestMethod("POST");
@@ -126,8 +121,8 @@ public class PlaceholderSender implements Runnable {
 		}
 	}
 	
-	private Map<UUID, String> getPlayerList(String address, final String encodedPassword) throws PingException, IOException {
-		address = new StringBuilder("http://").append(address).append("/players?password=").append(encodedPassword).toString();
+	private Map<UUID, String> getPlayerList(String address) throws PingException, IOException {
+		address = new StringBuilder("http://").append(address).append("/players?password=").toString();
 
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 

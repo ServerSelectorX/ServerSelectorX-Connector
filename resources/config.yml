@@ -27,6 +27,3 @@ debug: false
 # This should generally be set to true. Set it to false for debugging issues
 # that may be related to caching.
 enable-caching: true
-
-# don't touch this option unless you know you need to
-password: "a"
