@@ -102,15 +102,15 @@ public class PlaceholderRegistry {
 		public String getValue(final UUID uuid, final String name) {
 			Main.placeholders++;
 			if (Main.cacheEnabled) {
-				final Object cache = Cache.getCachedObject("ssxplaceholder" + name + this.getKey());
-				if (cache == null) {
+				final Optional<String> cache = Cache.get("ssxplaceholder" + name + this.getKey());
+				if (cache.isEmpty()) {
 					final String value = this.function.apply(uuid, name);
 					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), 1);
-					Cache.addCachedObject("ssxplaceholder" + name + this.getKey(), value, timeout);
+					Cache.set("ssxplaceholder" + name + this.getKey(), value, timeout);
 					return value;
 				} else {
 					Main.placeholdersCached++;
-					return (String) cache;
+					return cache.get();
 				}
 			} else {
 				return this.function.apply(uuid, name);
@@ -131,15 +131,15 @@ public class PlaceholderRegistry {
 		public String getValue() {
 			Main.placeholders++;
 			if (Main.cacheEnabled) {
-				final Object cache = Cache.getCachedObject("ssxplaceholder" + this.getKey());
-				if (cache == null) {
+				final Optional<String> cache = Cache.get("ssxplaceholder" + this.getKey());
+				if (cache.isEmpty()) {
 					final String value = this.valueSupplier.get();
 					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), 1);
-					Cache.addCachedObject("ssxplaceholder" + this.getKey(), value, timeout);
+					Cache.set("ssxplaceholder" + this.getKey(), value, timeout);
 					return value;
 				} else {
 					Main.placeholdersCached++;
-					return (String) cache;
+					return cache.get();
 				}
 			} else {
 				return this.valueSupplier.get();
