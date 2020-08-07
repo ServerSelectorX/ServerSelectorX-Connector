@@ -40,7 +40,9 @@ public class PlaceholderSender implements Runnable {
 			}
 		}
 		
-		final String address = this.addresses.pop().trim();
+		final String s = this.addresses.pop().trim();
+		final String address = (!s.startsWith("https://") && !s.startsWith("http://"))
+				? "http://" + s : s;
 		
 		debug(address, "Preparing to send data");
 		
@@ -104,7 +106,7 @@ public class PlaceholderSender implements Runnable {
 		debug(address, "Placeholders json: " + json);
 		final String parameters = String.format("password=%s&server=%s&data=%s", serverName, this.encode(json));
 
-		final HttpURLConnection connection = (HttpURLConnection) new URL("http://" + address).openConnection();
+		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 		connection.setRequestMethod("POST");
 		connection.setRequestProperty("Content-Length", parameters.length() + "");
 		connection.setDoOutput(true);
