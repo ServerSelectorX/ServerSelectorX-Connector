@@ -103,14 +103,14 @@ public class PlaceholderRegistry {
 			Main.placeholders++;
 			if (Main.cacheEnabled) {
 				final Optional<String> cache = Cache.get("ssxplaceholder" + name + this.getKey());
-				if (cache.isEmpty()) {
+				if (cache.isPresent()) {
+					Main.placeholdersCached++;
+					return cache.get();
+				} else {
 					final String value = this.function.apply(uuid, name);
 					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), 1);
 					Cache.set("ssxplaceholder" + name + this.getKey(), value, timeout);
 					return value;
-				} else {
-					Main.placeholdersCached++;
-					return cache.get();
 				}
 			} else {
 				return this.function.apply(uuid, name);
@@ -132,14 +132,14 @@ public class PlaceholderRegistry {
 			Main.placeholders++;
 			if (Main.cacheEnabled) {
 				final Optional<String> cache = Cache.get("ssxplaceholder" + this.getKey());
-				if (cache.isEmpty()) {
+				if (cache.isPresent()) {
+					Main.placeholdersCached++;
+					return cache.get();
+				} else {
 					final String value = this.valueSupplier.get();
 					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), 1);
 					Cache.set("ssxplaceholder" + this.getKey(), value, timeout);
 					return value;
-				} else {
-					Main.placeholdersCached++;
-					return cache.get();
 				}
 			} else {
 				return this.valueSupplier.get();
