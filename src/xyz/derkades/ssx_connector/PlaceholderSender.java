@@ -129,10 +129,8 @@ public class PlaceholderSender implements Runnable {
 		}
 	}
 	
-	private Map<UUID, String> getPlayerList(String address) throws PingException, IOException {
-		address = new StringBuilder("http://").append(address).append("/players?password=").toString();
-
-		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
+	private Map<UUID, String> getPlayerList(final String address) throws PingException, IOException {
+		final HttpURLConnection connection = (HttpURLConnection) new URL(address + "/players").openConnection();
 
 		if (connection.getResponseCode() == 401) {
 			throw new PingException("Invalid password");
