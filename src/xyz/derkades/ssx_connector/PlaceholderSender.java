@@ -64,12 +64,15 @@ public class PlaceholderSender implements Runnable {
 			players = getPlayerList(address);
 		} catch (final MalformedURLException e) {
 			PingLogger.logFail(address, "Invalid address");
+			debug(e);
 			return;
 		} catch (final IOException e) {
 			PingLogger.logFail(address, "IOException: " + e.getMessage());
+			debug(e);
 			return;
 		} catch (final PingException e) {
 			PingLogger.logFail(address, e.getMessage());
+			debug(e);
 			return;
 		}
 		
@@ -85,12 +88,15 @@ public class PlaceholderSender implements Runnable {
 					sendPlaceholders(address, serverName, placeholders);
 				} catch (final MalformedURLException e) {
 					PingLogger.logFail(address, "Invalid address");
+					debug(e);
 					return;
 				} catch (final IOException e) {
 					PingLogger.logFail(address, "IOException: " + e.getMessage());
+					debug(e);
 					return;
 				} catch (final PingException e) {
 					PingLogger.logFail(address, e.getMessage());
+					debug(e);
 					return;
 				}
 	
@@ -164,6 +170,12 @@ public class PlaceholderSender implements Runnable {
 	private void debug(final String address, final String message) {
 		if (Main.instance.getConfig().getBoolean("debug", false)) {
 			Main.instance.getLogger().info("[Debug] " + address + " - " + message);
+		}
+	}
+	
+	private void debug(final Exception e) {
+		if (Main.instance.getConfig().getBoolean("debug", false)) {
+			e.printStackTrace();
 		}
 	}
 	
