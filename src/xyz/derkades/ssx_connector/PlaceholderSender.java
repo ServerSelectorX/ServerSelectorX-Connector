@@ -119,10 +119,6 @@ public class PlaceholderSender implements Runnable {
 
 		final DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
 		outputStream.writeBytes(parameters);
-		
-		if (connection.getResponseCode() == 401) {
-			throw new PingException("Invalid password");
-		}
 
 		if (connection.getResponseCode() == 400) {
 			throw new PingException("Bad request. Make sure you are using the latest plugin version on all servers. If you are, please report this issue.");
@@ -131,10 +127,6 @@ public class PlaceholderSender implements Runnable {
 	
 	private Map<UUID, String> getPlayerList(final String address) throws PingException, IOException {
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address + "/players").openConnection();
-
-		if (connection.getResponseCode() == 401) {
-			throw new PingException("Invalid password");
-		}
 
 		if (connection.getResponseCode() == 400) {
 			throw new PingException("Bad request. Make sure you are using the latest plugin version on all servers. If you are, please report this issue.");
