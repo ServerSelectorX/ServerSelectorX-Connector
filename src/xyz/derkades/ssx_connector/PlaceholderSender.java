@@ -114,7 +114,6 @@ public class PlaceholderSender implements Runnable {
 
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Length", parameters.length() + "");
 		connection.setDoOutput(true);
 
 		final DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
