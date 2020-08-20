@@ -70,11 +70,11 @@ public class PlaceholderSender implements Runnable {
 			PingLogger.logFail(address, "IOException: " + e.getMessage());
 			debug(e);
 			return;
-		} catch (final PingException e) {
-			PingLogger.logFail(address, e.getMessage());
-			debug(e);
-			return;
-		}
+		}// catch (final PingException e) {
+//			PingLogger.logFail(address, e.getMessage());
+//			debug(e);
+//			return;
+//		}
 		
 		debug(address, "Done. (" + players.size() + " players)");
 		players.forEach((uuid, name) -> debug(address, " - " + uuid + ":" + name));
@@ -94,11 +94,11 @@ public class PlaceholderSender implements Runnable {
 					PingLogger.logFail(address, "IOException: " + e.getMessage());
 					debug(e);
 					return;
-				} catch (final PingException e) {
-					PingLogger.logFail(address, e.getMessage());
-					debug(e);
-					return;
-				}
+				} //catch (final PingException e) {
+//					PingLogger.logFail(address, e.getMessage());
+//					debug(e);
+//					return;
+//				}
 	
 				PingLogger.logSuccess(address);
 				
@@ -107,22 +107,31 @@ public class PlaceholderSender implements Runnable {
 	}
 	
 	private void sendPlaceholders(final String address, final String serverName,
-			final Map<String, Object> placeholders) throws IOException, PingException {
+			final Map<String, Object> placeholders) throws IOException {
 		final String json = new Gson().toJson(placeholders).toString();
 		debug(address, "Placeholders json: " + json);
 		final String parameters = String.format("server=%s&data=%s", serverName, this.encode(json));
 
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 		connection.setRequestMethod("POST");
+//		connection.setRequestProperty("Content-Type", "application/json; utf-8");
 		connection.setDoOutput(true);
 
 		final DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
 		outputStream.writeBytes(parameters);
+		
+		if (connection.getResponseCode() != 200) {
+			throw new IOException("Response code " + connection.getResponseCode());
+		}
 	}
 	
-	private Map<UUID, String> getPlayerList(final String address) throws PingException, IOException {
+	private Map<UUID, String> getPlayerList(final String address) throws IOException {
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address + "/players").openConnection();
 
+		if (connection.getResponseCode() != 200) {
+			throw new IOException("Response code " + connection.getResponseCode());
+		}
+		
 		final InputStream inputStream = connection.getInputStream();
 		final BufferedReader streamReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
 		final StringBuilder responseBuilder = new StringBuilder();
@@ -160,14 +169,14 @@ public class PlaceholderSender implements Runnable {
 		}
 	}
 	
-	private static final class PingException extends Exception {
-		
-		private static final long serialVersionUID = 1L;
-
-		PingException(final String message){
-			super(message);
-		}
-		
-	}
+//	private static final class PingException extends Exception {
+//
+//		private static final long serialVersionUID = 1L;
+//
+//		PingException(final String message){
+//			super(message);
+//		}
+//
+//	}
 
 }
