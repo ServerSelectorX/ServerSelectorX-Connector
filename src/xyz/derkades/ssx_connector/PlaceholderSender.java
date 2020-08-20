@@ -110,7 +110,7 @@ public class PlaceholderSender implements Runnable {
 			final Map<String, Object> placeholders) throws IOException {
 		final String json = new Gson().toJson(placeholders).toString();
 		debug(address, "Placeholders json: " + json);
-		final String parameters = String.format("server=%s&data=%s", serverName, this.encode(json));
+		final String parameters = String.format("server=%s&data=%s", this.encode(serverName), this.encode(json));
 
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 		connection.setRequestMethod("POST");
