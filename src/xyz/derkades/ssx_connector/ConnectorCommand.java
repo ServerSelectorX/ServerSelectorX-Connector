@@ -111,6 +111,10 @@ public class ConnectorCommand implements CommandExecutor {
 			if (args.length == 2) {
 				try {
 					seconds = Integer.parseInt(args[1]);
+					if (seconds <= 0) {
+						sender.sendMessage("Number must be positive");
+						return true;
+					}
 				} catch (final NumberFormatException e) {
 					sender.sendMessage("Invalid number '" + args[1] + "'");
 					return true;
@@ -127,8 +131,11 @@ public class ConnectorCommand implements CommandExecutor {
 				sender.sendMessage("Sent data " + Main.sendAmount + " times");
 				sender.sendMessage("Placeholders collected: " + Main.placeholders + " (" + Main.placeholders/seconds + "/s)");
 				sender.sendMessage("Placeholders from cache: " + Main.placeholdersCached + " (" + Main.placeholdersCached/seconds + "/s)");
-				sender.sendMessage("Total placeholders sent: " + (Main.placeholders+Main.placeholdersCached) + " (" + (Main.placeholders+Main.placeholdersCached)/seconds + "/s)");
-				sender.sendMessage(String.format("Cache ratio: %.1f%%", 100 - ((float) Main.placeholders / (Main.placeholdersCached > 0 ? Main.placeholdersCached : 1)) * 100));
+				final int total = Main.placeholders+Main.placeholdersCached;
+				sender.sendMessage("Total placeholders sent: " + total + " (" + total/seconds + "/s)");
+				if (total > 0) {
+					sender.sendMessage(String.format("Cache ratio: %.1f%%", ((float) Main.placeholdersCached / total) * 100));
+				}
 			}, seconds * 20);
 			return true;
 		}
