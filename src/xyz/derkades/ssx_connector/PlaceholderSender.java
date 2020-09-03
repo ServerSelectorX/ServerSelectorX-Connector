@@ -102,6 +102,8 @@ public class PlaceholderSender implements Runnable {
 	
 				PingLogger.logSuccess(address);
 				
+				Main.sendAmount++;
+				
 				debug(address, "Data sent!");
 		}));
 	}

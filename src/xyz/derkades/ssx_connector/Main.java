@@ -27,6 +27,7 @@ public class Main extends JavaPlugin {
 	 */
 	static int placeholders = 0;
 	static int placeholdersCached = 0;
+	static int sendAmount = 0;
 	
 	static boolean cacheEnabled = true;
 
