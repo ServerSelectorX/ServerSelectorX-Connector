@@ -13,6 +13,13 @@ server-name: ''
 # server, so each server will get data every 4 seconds
 send-interval: 4
 
+
+
+
+
+
+# -------- Advanced users only ------------
+
 debug: false
 
 # If you have a lot of placeholders, send data very frequently and/or send data to many servers,
@@ -35,8 +42,9 @@ debug: false
 #async:
 # - placeholdername
 
-# Default cache duration in seconds
-default-cache-time: 1
+# Default cache duration in seconds. Increasing this helps with lag when sending data to many
+# addresses. Usually this should be set to the same number as `send-interval`.
+default-cache-time: 2
 
 # This should generally be set to true. Set it to false for debugging issues
 # that may be related to caching.
