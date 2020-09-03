@@ -108,7 +108,7 @@ public class PlaceholderRegistry {
 				} else {
 					Main.placeholdersUncached++;
 					final String value = this.function.apply(uuid, name);
-					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), 1);
+					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), Main.instance.getConfig().getInt("default-cache-time", 1));
 					Cache.set("ssxplaceholder" + name + this.getKey(), value, timeout);
 					return value;
 				}
@@ -139,7 +139,7 @@ public class PlaceholderRegistry {
 				} else {
 					Main.placeholdersUncached++;
 					final String value = this.valueSupplier.get();
-					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), 1);
+					final int timeout = Main.instance.getConfig().getInt("cache." + this.getKey(), Main.instance.getConfig().getInt("default-cache-time", 1));
 					Cache.set("ssxplaceholder" + this.getKey(), value, timeout);
 					return value;
 				}

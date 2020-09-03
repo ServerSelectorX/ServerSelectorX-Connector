@@ -35,6 +35,9 @@ debug: false
 #async:
 # - placeholdername
 
+# Default cache duration in seconds
+default-cache-time: 1
+
 # This should generally be set to true. Set it to false for debugging issues
 # that may be related to caching.
 enable-caching: true
