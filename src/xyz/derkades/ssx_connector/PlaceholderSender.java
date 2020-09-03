@@ -78,7 +78,7 @@ public class PlaceholderSender implements Runnable {
 		debug(address, "Collecting placeholders..");
 		
 		PlaceholderRegistry.collectPlaceholders(players, placeholders ->
-			// Go async to send placeholders
+			// This callback is executed synchronously, go async to send placeholders
 			Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
 				try {
 					sendPlaceholders(address, serverName, placeholders);
@@ -97,7 +97,8 @@ public class PlaceholderSender implements Runnable {
 				Main.sendAmount++;
 				
 				debug(address, "Data sent!");
-		}));
+			})
+		);
 	}
 	
 	private void sendPlaceholders(final String address, final String serverName,
