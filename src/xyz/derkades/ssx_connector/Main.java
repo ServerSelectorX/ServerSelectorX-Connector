@@ -25,7 +25,7 @@ public class Main extends JavaPlugin {
 	/*
 	 * Used for measuring the amount of placeholders collected
 	 */
-	static int placeholders = 0;
+	static int placeholdersUncached = 0;
 	static int placeholdersCached = 0;
 	static int sendAmount = 0;
 	
@@ -56,10 +56,7 @@ public class Main extends JavaPlugin {
 		registerMetrics();
 		
 		getServer().getScheduler().runTaskTimer(this, () -> {
-			final long start = System.currentTimeMillis();
-			final int i = Cache.cleanCache();
-			final long diff = System.currentTimeMillis() - start;
-			getLogger().info("Cleaned cache, removed " + i + " entries in " + diff + " ms.");
+			Cache.cleanCache();
 		}, 60*60*20, 60*60*20);
 	}
 
