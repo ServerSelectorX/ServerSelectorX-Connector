@@ -9,20 +9,31 @@ server-name: ''
 # How often the connector plugin sends placeholders, in seconds.
 # If you have multiple servers, the plugin will ping all servers within this time,
 # with a roughly consistent interval. For example:
-# send-interval 2 / 4 addresses = every 0.5 seconds sending data to a server
+# send-interval 4 / 2 addresses = every 2 seconds sending data to a 
+# server, so each server will get data every 4 seconds
 send-interval: 4
 
 debug: false
 
+# If you have a lot of placeholders, send data very frequently and/or send data to many servers,
+# collecting placeholders can take a long time and affect server performance.
+# You can fix this by requesting some placeholders less often and requesting placeholders
+# asynchronously where possible.
+
 # Cache placeholders for some amount of seconds. Set to 0 to disable caching.
+# This improves performance by requesting placeholders less frequently.
+
 #cache:
 #  placeholdername: 10
 
-# Retrieve some placeholders asynchronously. Use with caution, only use with plugins that
-# can handle being called async. Especially if you use this with placeholders related to
-# players or worlds, stuff can break.
-# async:
-#  - placeholdername
+# Retrieve some placeholders asynchronously. They will be requested separate from
+# the main server thread, which means that even if it takes long to request a placeholder
+# it won't affect server performance. Use with caution, not all placeholders can be requested
+# async. Since placeholders are read-only most placeholders should be fine. If you get weird console
+# errors after adding placeholders here, remove them.
+
+#async:
+# - placeholdername
 
 # This should generally be set to true. Set it to false for debugging issues
 # that may be related to caching.
