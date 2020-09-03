@@ -70,11 +70,7 @@ public class PlaceholderSender implements Runnable {
 			PingLogger.logFail(address, "IOException: " + e.getMessage());
 			debug(e);
 			return;
-		}// catch (final PingException e) {
-//			PingLogger.logFail(address, e.getMessage());
-//			debug(e);
-//			return;
-//		}
+		}
 		
 		debug(address, "Done. (" + players.size() + " players)");
 		players.forEach((uuid, name) -> debug(address, " - " + uuid + ":" + name));
@@ -94,11 +90,7 @@ public class PlaceholderSender implements Runnable {
 					PingLogger.logFail(address, "IOException: " + e.getMessage());
 					debug(e);
 					return;
-				} //catch (final PingException e) {
-//					PingLogger.logFail(address, e.getMessage());
-//					debug(e);
-//					return;
-//				}
+				}
 	
 				PingLogger.logSuccess(address);
 				
@@ -116,7 +108,6 @@ public class PlaceholderSender implements Runnable {
 
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 		connection.setRequestMethod("POST");
-//		connection.setRequestProperty("Content-Type", "application/json; utf-8");
 		connection.setDoOutput(true);
 
 		final DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
@@ -170,15 +161,5 @@ public class PlaceholderSender implements Runnable {
 			e.printStackTrace();
 		}
 	}
-	
-//	private static final class PingException extends Exception {
-//
-//		private static final long serialVersionUID = 1L;
-//
-//		PingException(final String message){
-//			super(message);
-//		}
-//
-//	}
 
 }
