@@ -26,7 +26,12 @@ public abstract class Addon implements Listener {
 
 	public abstract String getVersion();
 
-	public abstract String getLicense();
+//	public abstract String getLicense();
+	
+	@Deprecated
+	public String getLicense() {
+		return null;
+	}
 
 	public abstract void onLoad();
 

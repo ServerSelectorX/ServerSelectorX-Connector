@@ -36,9 +36,9 @@ public class ConnectorCommand implements CommandExecutor {
 			sender.sendMessage("The following addons are installed:");
 
 			Main.instance.addons.forEach((addon) -> sender.sendMessage(String.format(
-					"%s by %s version %s license %s: '%s'",
+					"%s by %s version %s: '%s'",
 					addon.getName(), addon.getAuthor(), addon.getVersion(),
-					addon.getLicense(), addon.getDescription())));
+					addon.getDescription())));
 
 			sender.sendMessage("To view placeholders for each addon, use the command /ssxc placeholders <addon>.");
 			return true;
