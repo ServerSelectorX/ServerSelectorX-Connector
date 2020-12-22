@@ -5,11 +5,12 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
+import java.util.Stack;
 
 import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
@@ -33,7 +34,7 @@ public class Main extends JavaPlugin {
 
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
 
-	List<Addon> addons;
+	Map<String, Addon> addons = new HashMap<>();
 
 	private BukkitTask pingTask = null;
 
@@ -45,13 +46,11 @@ public class Main extends JavaPlugin {
 
 		this.addonsFolder.mkdir();
 
-		this.addons = this.loadAddons();
+		this.loadAddons();
 
 		this.getCommand("ssxc").setExecutor(new ConnectorCommand());
 
 		restartPingTask();
-
-		registerCorePlaceholders();
 
 		registerMetrics();
 		
@@ -60,54 +59,67 @@ public class Main extends JavaPlugin {
 		}, 60*60*20, 60*60*20);
 	}
 
-	private List<Addon> loadAddons() {
-		final List<Addon> addons = new ArrayList<>();
-
+	void loadAddons() {
+		PlaceholderRegistry.clear();
+		
 		final File addonsFolder = new File(this.getDataFolder() + File.separator + "addons");
 
 		addonsFolder.mkdirs();
-
+		
+		final Set<String> newlyLoadedAddons = new HashSet<>();
 		for (final File addonFile : addonsFolder.listFiles()) {
 			if (addonFile.isDirectory()) {
 				this.getLogger().warning("Skipped directory " + addonFile.getPath() + " in addons directory. There should not be any directories in the addon directory.");
 				continue;
 			}
-
+			
 			if (!addonFile.getName().endsWith(".class")) {
 				if (!addonFile.getName().endsWith(".yml")) {
 					this.getLogger().warning("The file " + addonFile.getAbsolutePath() + " does not belong in the addons folder.");
 				}
 				continue;
 			}
+			
+			final String addonName = addonFile.getName().replace(".class", "");
+			
+			Addon addon = this.addons.get(addonName);
 
-			Addon addon;
-
-			try (URLClassLoader loader = new URLClassLoader(new URL[]{addonsFolder.toURI().toURL()}, this.getClassLoader())){
-				final Class<?> clazz = loader.loadClass(addonFile.getName().replace(".class", ""));
-				addon = (Addon) clazz.getConstructor().newInstance();
-			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException |
-					IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
-				e.printStackTrace();
+			if (addon == null) {
+				this.getLogger().info("Loading addon " + addonName);
+				try (URLClassLoader loader = new URLClassLoader(new URL[]{addonsFolder.toURI().toURL()}, this.getClassLoader())){
+					final Class<?> clazz = loader.loadClass(addonFile.getName().replace(".class", ""));
+					addon = (Addon) clazz.getConstructor().newInstance();
+				} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException |
+						IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException e) {
+					e.printStackTrace();
+					continue;
+				}
+			}
+			
+			if (!addon.getName().equals(addonName)) {
+				this.getLogger().severe(String.format("Addon class name (%s) does not match class file name (%s)", addon.getName(), addonName));
 				continue;
 			}
 
 			addon.reloadConfig();
 			addon.onLoad();
-			addons.add(addon);
+			
+			this.addons.put(addonName, addon);
+			newlyLoadedAddons.add(addonName);
 		}
-
-		return addons;
-	}
-
-	void reloadAddons() {
-		final List<Addon> addons2 = new ArrayList<>(this.addons);
-		PlaceholderRegistry.clear();
-		this.addons.clear();
-		for (final Addon addon : addons2) {
-			addon.reloadConfig();
-			addon.onLoad();
-			this.addons.add(addon);
+		
+		// Check if any addons were removed
+		final Stack<String> toRemove = new Stack();
+		for (final String addonName : this.addons.keySet()) {
+			if (!newlyLoadedAddons.contains(addonName)) {
+				this.getLogger().info("Uninstalling addon " + addonName);
+				toRemove.add(addonName);
+			}
 		}
+		while (!toRemove.isEmpty()) {
+			this.addons.remove(toRemove.pop());
+		}
+		
 		registerCorePlaceholders();
 	}
 
@@ -150,7 +162,7 @@ public class Main extends JavaPlugin {
 
 		metrics.addCustomChart(new Metrics.AdvancedPie("addons", () -> {
 			final Map<String, Integer> map = new HashMap<>();
-			this.addons.forEach((a) -> map.put(a.getName(), 1));
+			this.addons.forEach((ign, a) -> map.put(a.getName(), 1));
 			return map;
 		}));
 	}

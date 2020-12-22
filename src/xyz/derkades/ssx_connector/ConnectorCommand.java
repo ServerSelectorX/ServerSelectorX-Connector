@@ -20,7 +20,7 @@ public class ConnectorCommand implements CommandExecutor {
 	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
 		if (args.length == 1 && (args[0].equals("reload") || args[0].equals("rl")) && sender.hasPermission("ssxc.reload")) {
 			Main.instance.reloadConfig();
-			Main.instance.reloadAddons();
+			Main.instance.loadAddons();
 			Main.instance.restartPingTask();
 			PingLogger.clear();
 			sender.sendMessage("The plugin configuration file and addon configuration files have been reloaded. A complete server reload or restart is required for the (de)installation of addons.");
@@ -35,7 +35,7 @@ public class ConnectorCommand implements CommandExecutor {
 
 			sender.sendMessage("The following addons are installed:");
 
-			Main.instance.addons.forEach((addon) -> sender.sendMessage(String.format(
+			Main.instance.addons.forEach((ign, addon) -> sender.sendMessage(String.format(
 					"%s by %s version %s: '%s'",
 					addon.getName(), addon.getAuthor(), addon.getVersion(),
 					addon.getDescription())));
@@ -45,12 +45,7 @@ public class ConnectorCommand implements CommandExecutor {
 		}
 
 		if (args.length == 2 && args[0].equals("placeholders")) {
-			Addon addon = null;
-			for (final Addon addon2 : Main.instance.addons) {
-				if (addon2.getName().equalsIgnoreCase(args[1])) {
-					addon = addon2;
-				}
-			}
+			final Addon addon = Main.instance.addons.get(args[1]);
 
 			if (addon == null) {
 				sender.sendMessage("No addon is installed with the name '" + args[1] + "'.");
