@@ -18,7 +18,12 @@ public class ConnectorCommand implements CommandExecutor {
 
 	@Override
 	public boolean onCommand(final CommandSender sender, final Command command, final String label, final String[] args) {
-		if (args.length == 1 && (args[0].equals("reload") || args[0].equals("rl")) && sender.hasPermission("ssxc.reload")) {
+		if (!sender.hasPermission("ssxc.admin")) {
+			sender.sendMessage("No permission");
+			return true;
+		}
+		
+		if (args.length == 1 && (args[0].equals("reload") || args[0].equals("rl"))) {
 			Main.instance.reloadConfig();
 			Main.instance.loadAddons();
 			Main.instance.restartPingTask();
@@ -70,7 +75,7 @@ public class ConnectorCommand implements CommandExecutor {
 			return true;
 		}
 
-		if (args.length == 1 && args[0].equals("status") && sender.hasPermission("ssxc.status")) {
+		if (args.length == 1 && args[0].equals("status")) {
 			final FileConfiguration config = Main.instance.getConfig();
 			if (config.getStringList("addresses").isEmpty()) {
 				sender.sendMessage("No addresses configured in config.yml, not sending data");
@@ -100,8 +105,7 @@ public class ConnectorCommand implements CommandExecutor {
 			return true;
 		}
 		
-		if ((args.length == 1 || args.length == 2) &&
-				args[0].equals("count") && sender.hasPermission("ssxc.count")) {
+		if ((args.length == 1 || args.length == 2) && args[0].equals("count")) {
 			final int seconds;
 			if (args.length == 2) {
 				try {
