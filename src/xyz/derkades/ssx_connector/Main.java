@@ -5,12 +5,13 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.Stack;
 
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
@@ -111,7 +112,7 @@ public class Main extends JavaPlugin {
 		}
 		
 		// Check if any addons were removed
-		final Stack<String> toRemove = new Stack();
+		final Deque<String> toRemove = new ArrayDeque<>();
 		for (final String addonName : this.addons.keySet()) {
 			if (!newlyLoadedAddons.contains(addonName)) {
 				this.getLogger().info("Uninstalling addon " + addonName);
