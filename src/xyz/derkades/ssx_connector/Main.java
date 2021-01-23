@@ -13,6 +13,8 @@ import java.util.Set;
 import java.util.Stack;
 
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
@@ -152,15 +154,15 @@ public class Main extends JavaPlugin {
 	private void registerMetrics() {
 		final Metrics metrics = new Metrics(this, 3000);
 
-		metrics.addCustomChart(new Metrics.SimplePie("data_send_interval", () -> this.getConfig().getInt("send-interval", 4) + ""));
+		metrics.addCustomChart(new SimplePie("data_send_interval", () -> this.getConfig().getInt("send-interval", 4) + ""));
 
-		metrics.addCustomChart(new Metrics.SimplePie("hub_servers", () ->
+		metrics.addCustomChart(new SimplePie("hub_servers", () ->
 			this.getConfig().getStringList("addresses").size() + ""));
 
-		metrics.addCustomChart(new Metrics.SimplePie("default_password", () ->
+		metrics.addCustomChart(new SimplePie("default_password", () ->
 			this.getConfig().getString("password").equals("a") + ""));
 
-		metrics.addCustomChart(new Metrics.AdvancedPie("addons", () -> {
+		metrics.addCustomChart(new AdvancedPie("addons", () -> {
 			final Map<String, Integer> map = new HashMap<>();
 			this.addons.forEach((ign, a) -> map.put(a.getName(), 1));
 			return map;
