@@ -10,9 +10,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Stack;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -22,7 +23,7 @@ import com.google.gson.Gson;
 
 public class PlaceholderSender implements Runnable {
 	
-	private final Stack<String> addresses = new Stack<>();
+	private final Deque<String> addresses = new ArrayDeque<>();
 
 	@Override
 	public void run() {
