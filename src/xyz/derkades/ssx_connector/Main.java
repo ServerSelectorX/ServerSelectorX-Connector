@@ -18,7 +18,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
-import org.bstats.sponge.Metrics2;
+import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.SimplePie;
+import org.bstats.sponge.Metrics;
+import org.bstats.sponge.Metrics.Factory;
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.config.ConfigDir;
@@ -75,12 +78,12 @@ public class Main {
 	private Path privateConfigDir;
 
 	//@Inject
-	private final Metrics2 metrics;
+	private final Metrics metrics;
 
 	CommentedConfigurationNode config;
 
 	@Inject
-	public Main(final Metrics2.Factory metricsFactory) {
+	public Main(final Factory metricsFactory) {
 		this.metrics = metricsFactory.make(3000);
 	}
 
@@ -126,8 +129,6 @@ public class Main {
 		} catch (final IOException e) {
 			throw new RuntimeException(e);
 		}
-
-		this.addons = this.loadAddons();
     }
 
     @Listener
@@ -147,13 +148,13 @@ public class Main {
     	final int addresses = this.config.getNode("addresses").getList((t) -> t).size();
     	final boolean defaultPassword = this.config.getNode("password").getString().equals("a");
 
-		this.metrics.addCustomChart(new Metrics2.SimplePie("data_send_interval", () -> sendIntervalSeconds + ""));
+		this.metrics.addCustomChart(new SimplePie("data_send_interval", () -> sendIntervalSeconds + ""));
 
-		this.metrics.addCustomChart(new Metrics2.SimplePie("hub_servers", () -> addresses + ""));
+		this.metrics.addCustomChart(new SimplePie("hub_servers", () -> addresses + ""));
 
-		this.metrics.addCustomChart(new Metrics2.SimplePie("default_password", () -> defaultPassword + ""));
+		this.metrics.addCustomChart(new SimplePie("default_password", () -> defaultPassword + ""));
 
-		this.metrics.addCustomChart(new Metrics2.AdvancedPie("addons", () -> {
+		this.metrics.addCustomChart(new AdvancedPie("addons", () -> {
 			final Map<String, Integer> map = new HashMap<>();
 			this.addons.forEach((a) -> map.put(a.getName(), 1));
 			return map;
