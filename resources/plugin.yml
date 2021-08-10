@@ -3,6 +3,7 @@ main: xyz.derkades.ssx_connector.Main
 version: '@project.version@'
 author: Derkades
 description: 'Addon plugin for ServerSelectorX'
+api-version: 1.13
 
 commands:
   ssxc:
