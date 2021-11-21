@@ -3,6 +3,9 @@
 .settings
 .classpath
 
+# IntelliJ
+*.iml
+
 # binary files
 *.class
 bin/

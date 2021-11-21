@@ -1,19 +1,20 @@
 package xyz.derkades.ssx_connector;
 
+import org.bukkit.Bukkit;
+import xyz.derkades.derkutils.caching.Cache;
+
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import org.bukkit.Bukkit;
-
-import xyz.derkades.derkutils.caching.Cache;
 
 public class PlaceholderRegistry {
 	
@@ -41,27 +42,38 @@ public class PlaceholderRegistry {
 	public static void clear() {
 		placeholders.clear();
 	}
-	
+
+	@Deprecated
 	public static void forEach(final Consumer<Placeholder> consumer) {
 		placeholders.forEach(consumer);
 	}
-	
+
 	public static Stream<Placeholder> stream() {
 		return placeholders.stream();
 	}
 	
 	static void collectPlaceholders(final Map<UUID, String> players, final Consumer<Map<String, Object>> consumer) {
-		final List<String> async = Main.instance.getConfig().getStringList("async");
-		
+		final Set<String> async = new HashSet<>(Main.instance.getConfig().getStringList("async"));
+
 		final Map<String, Object> placeholders = new HashMap<>();
 		
 		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
-			stream().filter((p) -> async.contains(p.getKey())).forEach(p ->
-					placeholders.put(p.getKey(), getValue(p, players)));
+			stream().filter((p) -> async.contains(p.getKey())) // Async placeholders only
+					.forEach(p -> {
+						Object value = getValue(p, players);
+						if (value != null) {
+							placeholders.put(p.getKey(), value);
+						}
+					});
 			
 			Bukkit.getScheduler().runTask(Main.instance, () -> {
-				stream().filter((p) -> !placeholders.containsKey(p.getKey())).forEach(p ->
-						placeholders.put(p.getKey(), getValue(p, players)));
+				stream().filter((p) -> !async.contains(p.getKey())) // Sync placeholders only
+						.forEach(p -> {
+							Object value = getValue(p, players);
+							if (value != null) {
+								placeholders.put(p.getKey(), value);
+							}
+						});
 				
 				consumer.accept(placeholders);
 			});
@@ -69,22 +81,30 @@ public class PlaceholderRegistry {
 	}
 	
 	static Object getValue(final Placeholder placeholder, final Map<UUID, String> players) {
-		final Object value;
-		
-		if (placeholder instanceof PlayerPlaceholder) {
-			value = players.entrySet().stream().collect(Collectors.toMap(
-							e -> e.getKey(),
-							e -> ((PlayerPlaceholder) placeholder).getValue(e.getKey(), e.getValue())));
-		} else {
-			value = ((GlobalPlaceholder) placeholder).getValue();
-		}
-		
-		if (value == null) {
-			if (placeholder.isFromAddon()) {
-				Main.instance.getLogger().warning(String.format("Placeholder %s from addon %s is null! This is either an addon bug or addon configuration issue.", placeholder.getKey(), placeholder.getAddon()));
+		Object value;
+
+		try {
+			if (placeholder instanceof PlayerPlaceholder) {
+				value = players.entrySet().stream().collect(Collectors.toMap(
+						Map.Entry::getKey,
+						e -> ((PlayerPlaceholder) placeholder).getValue(e.getKey(), e.getValue())));
 			} else {
-				Main.instance.getLogger().warning(String.format("Placeholder %s is null! This is either a bug in the plugin that registered it or a configuration issue.", placeholder.getKey()));
+				value = ((GlobalPlaceholder) placeholder).getValue();
 			}
+
+			if (value == null) {
+				if (placeholder.isFromAddon()) {
+					Main.instance.getLogger().warning(String.format("Placeholder %s from addon %s is null! This is either an addon bug or addon configuration issue.", placeholder.getKey(), placeholder.getAddon()));
+				} else {
+					Main.instance.getLogger().warning(String.format("Placeholder %s is null! This is either a bug in the plugin that registered it or a configuration issue.", placeholder.getKey()));
+				}
+			}
+		} catch (Exception e) {
+			Main.instance.getLogger().warning("An error occured while retrieving placeholder " + placeholder.getKey() + ". This is probably a bug " +
+					"in the plugin or expansion that added this placeholder (not in SSX-Connector).");
+			Main.instance.getLogger().warning("Note that not all plugins work properly when no players are online on a server.");
+			e.printStackTrace();
+			value = null;
 		}
 		
 		return value;
