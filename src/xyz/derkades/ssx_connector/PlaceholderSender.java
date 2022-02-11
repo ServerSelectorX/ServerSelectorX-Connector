@@ -1,25 +1,15 @@
 package xyz.derkades.ssx_connector;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
+import com.google.gson.Gson;
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
-
-import com.google.gson.Gson;
+import java.util.*;
 
 public class PlaceholderSender implements Runnable {
 	
@@ -111,6 +101,8 @@ public class PlaceholderSender implements Runnable {
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
 		connection.setRequestMethod("POST");
 		connection.setDoOutput(true);
+		connection.setConnectTimeout(1000);
+		connection.setReadTimeout(1000);
 
 		final DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
 		outputStream.writeBytes(parameters);
@@ -122,6 +114,8 @@ public class PlaceholderSender implements Runnable {
 	
 	private Map<UUID, String> getPlayerList(final String address) throws IOException {
 		final HttpURLConnection connection = (HttpURLConnection) new URL(address + "/players").openConnection();
+		connection.setConnectTimeout(1000);
+		connection.setReadTimeout(1000);
 
 		if (connection.getResponseCode() != 200) {
 			throw new IOException("Response code " + connection.getResponseCode());
