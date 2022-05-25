@@ -23,7 +23,7 @@ public class PlaceholderSender implements Runnable {
 		// sent to all addresses, repopulate the stack so the cycle can start over.
 		
 		if (this.addresses.isEmpty()) {
-			config.getStringList("addresses").forEach(this.addresses::push);
+			Main.instance.addresses().forEach(this.addresses::push);
 			
 			// If the user did not configure any addresses
 			if (this.addresses.isEmpty()) {
@@ -31,9 +31,7 @@ public class PlaceholderSender implements Runnable {
 			}
 		}
 		
-		final String s = this.addresses.pop().trim();
-		final String address = (!s.startsWith("https://") && !s.startsWith("http://"))
-				? "http://" + s : s;
+		final String address = this.addresses.pop();
 		
 		debug(address, "Preparing to send data");
 		

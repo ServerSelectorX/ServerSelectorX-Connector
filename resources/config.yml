@@ -49,3 +49,7 @@ default-cache-time: 2
 # This should generally be set to true. Set it to false for debugging issues
 # that may be related to caching.
 enable-caching: true
+
+# When a player joins this server, send a request to SSX in your hub server if there is a command to run for
+# this player (set by the postjoincommand action). Multiple hub servers are currently not supported.
+post-join-command: false

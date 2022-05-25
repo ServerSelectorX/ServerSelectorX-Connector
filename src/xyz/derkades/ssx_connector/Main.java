@@ -1,26 +1,20 @@
 package xyz.derkades.ssx_connector;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
 import xyz.derkades.derkutils.caching.Cache;
+
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Main extends JavaPlugin {
 
@@ -52,6 +46,8 @@ public class Main extends JavaPlugin {
 		this.loadAddons();
 
 		this.getCommand("ssxc").setExecutor(new ConnectorCommand());
+
+		Bukkit.getPluginManager().registerEvents(new PostJoinCommandRunner(), this);
 
 		restartPingTask();
 
@@ -168,6 +164,18 @@ public class Main extends JavaPlugin {
 			this.addons.forEach((ign, a) -> map.put(a.getName(), 1));
 			return map;
 		}));
+	}
+
+	public List<String> addresses() {
+		List<String> addresses = this.getConfig().getStringList("addresses");
+		if (addresses.isEmpty()) {
+			return Collections.emptyList();
+		}
+
+		return addresses.stream()
+				.map(String::trim)
+				.map(s -> (!s.startsWith("https://") && !s.startsWith("http://")) ? "http://" + s : s)
+				.collect(Collectors.toList());
 	}
 
 }
