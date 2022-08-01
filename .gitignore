@@ -5,6 +5,7 @@
 
 # IntelliJ
 *.iml
+.idea/
 
 # binary files
 *.class
