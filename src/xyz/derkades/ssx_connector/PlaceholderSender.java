@@ -9,6 +9,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PlaceholderSender implements Runnable {
@@ -21,17 +22,20 @@ public class PlaceholderSender implements Runnable {
 		
 		// Only send request to one address every time. When requests have been
 		// sent to all addresses, repopulate the stack so the cycle can start over.
-		
-		if (this.addresses.isEmpty()) {
-			Main.instance.addresses().forEach(this.addresses::push);
-			
-			// If the user did not configure any addresses
+
+		final String address;
+		synchronized (this.addresses) {
 			if (this.addresses.isEmpty()) {
-				return;
+				Main.instance.addresses().forEach(this.addresses::push);
+
+				// If the user did not configure any addresses
+				if (this.addresses.isEmpty()) {
+					return;
+				}
 			}
+
+			address = this.addresses.pop();
 		}
-		
-		final String address = this.addresses.pop();
 		
 		debug(address, "Preparing to send data");
 		
@@ -120,7 +124,7 @@ public class PlaceholderSender implements Runnable {
 		}
 		
 		final InputStream inputStream = connection.getInputStream();
-		final BufferedReader streamReader = new BufferedReader(new InputStreamReader(inputStream, "UTF-8"));
+		final BufferedReader streamReader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
 		final StringBuilder responseBuilder = new StringBuilder();
 
 		String responseString;
