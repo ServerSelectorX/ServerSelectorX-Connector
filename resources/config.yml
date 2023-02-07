@@ -6,20 +6,21 @@ addresses:
 # Set this to the name of this server EXACTLY as specified in the bungeecord config.
 server-name: ''
 
-# How often the connector plugin sends placeholders, in seconds.
-# If you have multiple servers, the plugin will ping all servers within this time,
-# with a roughly consistent interval. For example:
-# send-interval 4 / 2 addresses = every 2 seconds sending data to a 
-# server, so each server will get data every 4 seconds
-send-interval: 4
-
-
-
 
 
 
 # -------- Advanced users only ------------
 
+# How often the connector plugin sends placeholders, in seconds.
+# If you have multiple servers, the plugin will ping all servers within this time,
+# with a roughly consistent interval. For example:
+# send-interval 4 / 2 addresses = every 2 seconds sending data to a
+# server, so each server will get data every 4 seconds
+# IMPORTANT: If you change this, you must also change the server offline timeout
+# in the ServerSelectorX api.yml configuration file
+send-interval: 4
+
+# Set to true to enable verbose logging
 debug: false
 
 # If you have a lot of placeholders, send data very frequently and/or send data to many servers,
@@ -43,8 +44,8 @@ debug: false
 # - placeholdername
 
 # Default cache duration in seconds. Increasing this helps with lag when sending data to many
-# addresses. Usually this should be set to the same number as `send-interval`.
-default-cache-time: 2
+# addresses.
+default-cache-time: 4
 
 # This should generally be set to true. Set it to false for debugging issues
 # that may be related to caching.
