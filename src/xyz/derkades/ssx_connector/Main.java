@@ -128,6 +128,11 @@ public class Main extends JavaPlugin {
 
 		PlaceholderRegistry.registerPlaceholder(Optional.empty(), "max",
 				() -> String.valueOf(Bukkit.getMaxPlayers()));
+
+		String bukkitVersion = Bukkit.getBukkitVersion(); // "1.13.2-R0.1-SNAPSHOT
+		String humanVersion = bukkitVersion.substring(0, bukkitVersion.indexOf("-")); // 1.13.2
+		PlaceholderRegistry.registerPlaceholder(Optional.empty(), "version",
+				() -> humanVersion);
 	}
 
 	void restartPingTask() {
