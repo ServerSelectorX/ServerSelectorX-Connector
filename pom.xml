@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>xyz.derkades</groupId>
 	<artifactId>ssx-connector</artifactId>
-	<version>2.2.2</version>
+	<version>2.2.3-beta</version>
 
 	<name>ServerSelectorX-Connector</name>
 
