@@ -1,5 +1,8 @@
 package xyz.derkades.ssx_connector;
 
+import com.cjcrafter.foliascheduler.FoliaCompatibility;
+import com.cjcrafter.foliascheduler.ServerImplementation;
+import com.cjcrafter.foliascheduler.TaskImplementation;
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.SimplePie;
@@ -33,11 +36,16 @@ public class Main extends JavaPlugin {
 
 	Map<String, Addon> addons = new HashMap<>();
 
-	private BukkitTask pingTask = null;
+	private ServerImplementation scheduler;
+
+	private TaskImplementation pingTask = null;
 
 	@Override
 	public void onEnable() {
 		instance = this;
+
+		FoliaCompatibility foliaCompatibility = new FoliaCompatibility(this);
+		this.scheduler = foliaCompatibility.getServerImplementation();
 
 		super.saveDefaultConfig();
 
@@ -52,8 +60,8 @@ public class Main extends JavaPlugin {
 		restartPingTask();
 
 		registerMetrics();
-		
-		getServer().getScheduler().runTaskTimer(this, () -> {
+
+		this.scheduler.global().runAtFixedRate(() -> {
 			Cache.cleanCache();
 		}, 60*60*20, 60*60*20);
 	}
@@ -136,15 +144,15 @@ public class Main extends JavaPlugin {
 	}
 
 	void restartPingTask() {
-		if (this.pingTask != null) {
+		if (this.pingTask != null && this.pingTask.isRunning()) {
 			this.pingTask.cancel();
 		}
 
 		final int addresses = getConfig().getStringList("addresses").size();
 		final int interval = getConfig().getInt("send-interval");
 		final int taskIntervalTicks = (int) ((interval * 20f) / addresses);
-	
-		this.pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 40, taskIntervalTicks);
+
+		this.pingTask = this.scheduler.async().runAtFixedRate(new PlaceholderSender(), 40, taskIntervalTicks);
 	}
 	
 	@Override
@@ -183,4 +191,7 @@ public class Main extends JavaPlugin {
 				.collect(Collectors.toList());
 	}
 
+	public ServerImplementation getScheduler() {
+		return scheduler;
+	}
 }

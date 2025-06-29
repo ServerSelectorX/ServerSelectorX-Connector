@@ -32,7 +32,7 @@ public class PostJoinCommandRunner implements Listener {
 		final UUID uuid = event.getPlayer().getUniqueId();
 		final String playerName = event.getPlayer().getName();
 
-		Bukkit.getServer().getScheduler().runTaskAsynchronously(Main.instance, () -> {
+		Main.instance.getScheduler().async().runNow(() -> {
 			try {
 				final String address = baseAddress + "/post-join-command?uuid=" + uuid;
 				final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
@@ -56,7 +56,7 @@ public class PostJoinCommandRunner implements Listener {
 
 				final String commandToRun = new String(responseBytes, StandardCharsets.UTF_8).replace("{player}", playerName);
 
-				Bukkit.getServer().getScheduler().runTask(Main.instance, () -> {
+				Main.instance.getScheduler().async().runNow(() -> {
 					Main.instance.getLogger().info("Going to run command:");
 					if (Bukkit.getPlayer(uuid) == null) {
 						Main.instance.getLogger().warning("Player is no longer online?");

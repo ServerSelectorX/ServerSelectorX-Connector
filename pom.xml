@@ -46,7 +46,7 @@
 				<version>3.6.0</version>
 				<configuration>
 					<createDependencyReducedPom>false</createDependencyReducedPom>
-					<minimizeJar>true</minimizeJar>
+					<minimizeJar>false</minimizeJar>
 
 					<relocations>
 						<relocation>
@@ -60,6 +60,10 @@
 						<relocation>
 							<pattern>com.google.gson</pattern>
 							<shadedPattern>xyz.derkades.ssx_connector.lib.gson</shadedPattern>
+						</relocation>
+						<relocation>
+							<pattern>com.cjcrafter.foliascheduler</pattern>
+							<shadedPattern>xyz.derkades.ssx_connector.lib.foliascheduler</shadedPattern>
 						</relocation>
 					</relocations>
 
@@ -104,6 +108,11 @@
 			<version>2.11.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>com.cjcrafter</groupId>
+			<artifactId>foliascheduler</artifactId>
+			<version>0.7.0</version>
+		</dependency>
 	</dependencies>
 
 	<repositories>

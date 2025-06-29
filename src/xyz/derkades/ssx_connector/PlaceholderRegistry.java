@@ -56,8 +56,8 @@ public class PlaceholderRegistry {
 		final Set<String> async = new HashSet<>(Main.instance.getConfig().getStringList("async"));
 
 		final Map<String, Object> placeholders = new HashMap<>();
-		
-		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
+
+		Main.instance.getScheduler().async().runNow(() -> {
 			stream().filter((p) -> async.contains(p.getKey())) // Async placeholders only
 					.forEach(p -> {
 						Object value = getValue(p, players);
@@ -65,8 +65,8 @@ public class PlaceholderRegistry {
 							placeholders.put(p.getKey(), value);
 						}
 					});
-			
-			Bukkit.getScheduler().runTask(Main.instance, () -> {
+
+			Main.instance.getScheduler().global().run(() -> {
 				stream().filter((p) -> !async.contains(p.getKey())) // Sync placeholders only
 						.forEach(p -> {
 							Object value = getValue(p, players);
@@ -74,7 +74,7 @@ public class PlaceholderRegistry {
 								placeholders.put(p.getKey(), value);
 							}
 						});
-				
+
 				consumer.accept(placeholders);
 			});
 		});

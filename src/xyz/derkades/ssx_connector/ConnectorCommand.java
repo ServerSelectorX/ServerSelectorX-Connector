@@ -126,7 +126,8 @@ public class ConnectorCommand implements CommandExecutor {
 			Main.placeholdersUncached = 0;
 			Main.placeholdersCached = 0;
 			Main.sendAmount = 0;
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, () -> {
+
+			Main.instance.getScheduler().global().runDelayed(() -> {
 				final int addresses = Main.instance.getConfig().getStringList("addresses").size();
 				final int interval = Main.instance.getConfig().getInt("send-interval");
 				final int ticks = (interval * 20) / addresses;

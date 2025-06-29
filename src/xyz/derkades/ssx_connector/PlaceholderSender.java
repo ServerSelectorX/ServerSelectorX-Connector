@@ -72,7 +72,7 @@ public class PlaceholderSender implements Runnable {
 		
 		PlaceholderRegistry.collectPlaceholders(players, placeholders ->
 			// This callback is executed synchronously, go async to send placeholders
-			Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
+			Main.instance.getScheduler().async().runNow(() -> {
 				try {
 					sendPlaceholders(address, serverName, placeholders);
 				} catch (final MalformedURLException e) {
@@ -84,11 +84,11 @@ public class PlaceholderSender implements Runnable {
 					debug(e);
 					return;
 				}
-	
+
 				PingLogger.logSuccess(address);
-				
+
 				Main.sendAmount++;
-				
+
 				debug(address, "Data sent!");
 			})
 		);
