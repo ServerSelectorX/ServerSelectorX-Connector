@@ -6,7 +6,6 @@ import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-import xyz.derkades.derkutils.caching.Cache;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,7 +25,7 @@ public class Main extends JavaPlugin {
 	static int placeholdersUncached = 0;
 	static int placeholdersCached = 0;
 	static int sendAmount = 0;
-	
+
 	static boolean cacheEnabled = true;
 
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
@@ -52,7 +51,7 @@ public class Main extends JavaPlugin {
 		restartPingTask();
 
 		registerMetrics();
-		
+
 		getServer().getScheduler().runTaskTimer(this, () -> {
 			Cache.cleanCache();
 		}, 60*60*20, 60*60*20);
@@ -60,27 +59,27 @@ public class Main extends JavaPlugin {
 
 	void loadAddons() {
 		PlaceholderRegistry.clear();
-		
+
 		final File addonsFolder = new File(this.getDataFolder() + File.separator + "addons");
 
 		addonsFolder.mkdirs();
-		
+
 		final Set<String> newlyLoadedAddons = new HashSet<>();
 		for (final File addonFile : addonsFolder.listFiles()) {
 			if (addonFile.isDirectory()) {
 				this.getLogger().warning("Skipped directory " + addonFile.getPath() + " in addons directory. There should not be any directories in the addon directory.");
 				continue;
 			}
-			
+
 			if (!addonFile.getName().endsWith(".class")) {
 				if (!addonFile.getName().endsWith(".yml")) {
 					this.getLogger().warning("The file " + addonFile.getAbsolutePath() + " does not belong in the addons folder.");
 				}
 				continue;
 			}
-			
+
 			final String addonName = addonFile.getName().replace(".class", "");
-			
+
 			Addon addon = this.addons.get(addonName);
 
 			if (addon == null) {
@@ -94,7 +93,7 @@ public class Main extends JavaPlugin {
 					continue;
 				}
 			}
-			
+
 			if (!addon.getName().equals(addonName)) {
 				this.getLogger().severe(String.format("Addon class name (%s) does not match class file name (%s)", addon.getName(), addonName));
 				continue;
@@ -102,11 +101,11 @@ public class Main extends JavaPlugin {
 
 			addon.reloadConfig();
 			addon.onLoad();
-			
+
 			this.addons.put(addonName, addon);
 			newlyLoadedAddons.add(addonName);
 		}
-		
+
 		// Check if any addons were removed
 		final Deque<String> toRemove = new ArrayDeque<>();
 		for (final String addonName : this.addons.keySet()) {
@@ -118,7 +117,7 @@ public class Main extends JavaPlugin {
 		while (!toRemove.isEmpty()) {
 			this.addons.remove(toRemove.pop());
 		}
-		
+
 		registerCorePlaceholders();
 	}
 
@@ -143,10 +142,10 @@ public class Main extends JavaPlugin {
 		final int addresses = getConfig().getStringList("addresses").size();
 		final int interval = getConfig().getInt("send-interval");
 		final int taskIntervalTicks = (int) ((interval * 20f) / addresses);
-	
+
 		this.pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 40, taskIntervalTicks);
 	}
-	
+
 	@Override
 	public void reloadConfig() {
 		super.reloadConfig();
