@@ -1,19 +1,20 @@
 package xyz.derkades.ssx_connector;
 
-import com.google.common.io.ByteStreams;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URI;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.UUID;
+import com.google.common.io.ByteStreams;
 
 public class PostJoinCommandRunner implements Listener {
 
@@ -35,7 +36,7 @@ public class PostJoinCommandRunner implements Listener {
 		Bukkit.getServer().getScheduler().runTaskAsynchronously(Main.instance, () -> {
 			try {
 				final String address = baseAddress + "/post-join-command?uuid=" + uuid;
-				final HttpURLConnection connection = (HttpURLConnection) new URL(address).openConnection();
+				final HttpURLConnection connection = (HttpURLConnection) URI.create(address).toURL().openConnection();
 				connection.setReadTimeout(5000);
 				connection.setConnectTimeout(5000);
 				connection.connect();
