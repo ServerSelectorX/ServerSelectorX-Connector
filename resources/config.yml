@@ -11,10 +11,11 @@ server-name: null
 # -------- Advanced users only ------------
 
 # List of servers to use for exchanging server information. By default,
-# public servers are used. If you wish, you can host your own. The first
-# working server in this list is used.
+# public servers are used. If you wish, you can host your own. Placeholders
+# are sent to all servers listed here.
 placeholder-servers:
-  - http://localhost:8080
+  - https://ssx1.rslot.nl
+  - https://ssx2.kwiknet.nl
 
 # How often the connector plugin sends placeholders, in seconds.
 send-interval: 5
