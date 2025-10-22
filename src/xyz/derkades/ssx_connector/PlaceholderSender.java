@@ -89,7 +89,7 @@ public class PlaceholderSender implements Runnable {
 		json.addProperty("server", serverName);
 		json.add("placeholders", placeholdersJson);
 
-		final String jsonString = placeholdersJson.toString();
+		final String jsonString = json.toString();
 
 		this.debug("sending json: " + jsonString);
 
@@ -120,7 +120,7 @@ public class PlaceholderSender implements Runnable {
 	}
 
 	private String[] sendPlaceholdersTo(final String address, final byte[] data) throws IOException {
-		final HttpURLConnection connection = (HttpURLConnection) URI.create(address).toURL().openConnection();
+		final HttpURLConnection connection = (HttpURLConnection) URI.create(address + "/connector").toURL().openConnection();
 		connection.setRequestMethod("POST");
 		connection.setDoOutput(true);
 		connection.setConnectTimeout(1000);
@@ -138,7 +138,7 @@ public class PlaceholderSender implements Runnable {
 		try (InputStream in = connection.getInputStream()) {
 			responseData = in.readAllBytes();
 		}
-		final JsonObject responseJson = JsonParser.parseString(new String(responseData)).getAsJsonObject();
+		final JsonObject responseJson = new JsonParser().parse(new String(responseData)).getAsJsonObject();
 		final JsonArray jsonPlayersArray = responseJson.get("players").getAsJsonArray();
 		final String[] players = new String[jsonPlayersArray.size()];
 		for (int i = 0; i < jsonPlayersArray.size(); i++) {

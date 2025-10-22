@@ -87,7 +87,7 @@ public class ConnectorCommand implements CommandExecutor {
 				return true;
 			}
 
-			if (config.getStringList("placeholder-servers:").isEmpty()) {
+			if (config.getStringList("placeholder-servers").isEmpty()) {
 				sender.sendMessage("No placeholder-servers configured in config.yml");
 				return true;
 			}

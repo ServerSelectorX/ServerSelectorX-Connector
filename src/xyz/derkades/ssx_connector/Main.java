@@ -1,19 +1,27 @@
 package xyz.derkades.ssx_connector;
 
+import java.io.File;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayDeque;
+import java.util.Collections;
+import java.util.Deque;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.bstats.bukkit.Metrics;
 import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitTask;
-
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class Main extends JavaPlugin {
 
@@ -39,9 +47,9 @@ public class Main extends JavaPlugin {
 
 		Bukkit.getPluginManager().registerEvents(new PostJoinCommandRunner(), this);
 
-		restartPingTask();
+		this.restartPingTask();
 
-		registerMetrics();
+		this.registerMetrics();
 	}
 
 	void loadAddons() {
@@ -105,7 +113,7 @@ public class Main extends JavaPlugin {
 			this.addons.remove(toRemove.pop());
 		}
 
-		registerCorePlaceholders();
+		this.registerCorePlaceholders();
 	}
 
 	void registerCorePlaceholders() {
@@ -115,8 +123,8 @@ public class Main extends JavaPlugin {
 		PlaceholderRegistry.registerPlaceholder(Optional.empty(), "max",
 				() -> String.valueOf(Bukkit.getMaxPlayers()));
 
-		String bukkitVersion = Bukkit.getBukkitVersion(); // "1.13.2-R0.1-SNAPSHOT
-		String humanVersion = bukkitVersion.substring(0, bukkitVersion.indexOf("-")); // 1.13.2
+		final String bukkitVersion = Bukkit.getBukkitVersion(); // "1.13.2-R0.1-SNAPSHOT
+		final String humanVersion = bukkitVersion.substring(0, bukkitVersion.indexOf("-")); // 1.13.2
 		PlaceholderRegistry.registerPlaceholder(Optional.empty(), "version",
 				() -> humanVersion);
 	}
@@ -126,11 +134,8 @@ public class Main extends JavaPlugin {
 			this.pingTask.cancel();
 		}
 
-		final int addresses = getConfig().getStringList("addresses").size();
-		final int interval = getConfig().getInt("send-interval");
-		final int taskIntervalTicks = (int) ((interval * 20f) / addresses);
-
-		this.pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 40, taskIntervalTicks);
+		final int intervalTicks = this.getConfig().getInt("send-interval") * 20;
+		this.pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 0, intervalTicks);
 	}
 
 	private void registerMetrics() {
@@ -152,7 +157,7 @@ public class Main extends JavaPlugin {
 	}
 
 	public List<String> addresses() {
-		List<String> addresses = this.getConfig().getStringList("addresses");
+		final List<String> addresses = this.getConfig().getStringList("addresses");
 		if (addresses.isEmpty()) {
 			return Collections.emptyList();
 		}
