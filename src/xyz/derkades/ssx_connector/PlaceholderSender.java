@@ -2,7 +2,9 @@ package xyz.derkades.ssx_connector;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.HashSet;
@@ -134,11 +136,11 @@ public class PlaceholderSender implements Runnable {
 			throw new IOException("Response code " + connection.getResponseCode());
 		}
 
-		byte[] responseData;
-		try (InputStream in = connection.getInputStream()) {
-			responseData = in.readAllBytes();
+		final JsonObject responseJson;
+		try (InputStream in = connection.getInputStream();
+				Reader reader = new InputStreamReader(in)) {
+			responseJson = new JsonParser().parse(reader).getAsJsonObject();
 		}
-		final JsonObject responseJson = new JsonParser().parse(new String(responseData)).getAsJsonObject();
 		final JsonArray jsonPlayersArray = responseJson.get("players").getAsJsonArray();
 		final String[] players = new String[jsonPlayersArray.size()];
 		for (int i = 0; i < jsonPlayersArray.size(); i++) {
