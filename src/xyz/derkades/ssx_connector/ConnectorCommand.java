@@ -3,7 +3,6 @@ package xyz.derkades.ssx_connector;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -22,7 +21,7 @@ public class ConnectorCommand implements CommandExecutor {
 			sender.sendMessage("No permission");
 			return true;
 		}
-		
+
 		if (args.length == 1 && (args[0].equals("reload") || args[0].equals("rl"))) {
 			Main.instance.reloadConfig();
 			Main.instance.loadAddons();
@@ -57,10 +56,11 @@ public class ConnectorCommand implements CommandExecutor {
 				sender.sendMessage("Get a list of installed addons using /ssxc addons");
 				return true;
 			}
-			
+
 			final Addon addonF = addon;
-			
-			final List<String> placeholders = PlaceholderRegistry.stream()
+
+			final List<String> placeholders = PlaceholderRegistry.getPlaceholders()
+					.stream()
 					.filter(p -> p.isFromAddon())
 					.filter(p -> p.getAddon() == addonF)
 					.map(Placeholder::getKey)
@@ -77,18 +77,23 @@ public class ConnectorCommand implements CommandExecutor {
 
 		if (args.length == 1 && args[0].equals("status")) {
 			final FileConfiguration config = Main.instance.getConfig();
-			if (config.getStringList("addresses").isEmpty()) {
-				sender.sendMessage("No addresses configured in config.yml, not sending data");
+			if (config.getString("network-id", "").isEmpty()) {
+				sender.sendMessage("No network-id configured in config.yml");
 				return true;
 			}
-			
-			if (config.getString("server-name").isEmpty()) {
-				sender.sendMessage("The server-name option is blank, not sending data");
+
+			if (config.getString("server-name", "").isEmpty()) {
+				sender.sendMessage("No server-name configured in config.yml");
 				return true;
 			}
-			
+
+			if (config.getStringList("placeholder-servers:").isEmpty()) {
+				sender.sendMessage("No placeholder-servers configured in config.yml");
+				return true;
+			}
+
 			if (PingLogger.isEmpty()) {
-				sender.sendMessage("No data has been sent to servers");
+				sender.sendMessage("No data has been sent");
 			} else {
 				sender.sendMessage("Data send history:");
 				PingLogger.forEach((address, status) -> {
@@ -102,43 +107,6 @@ public class ConnectorCommand implements CommandExecutor {
 					}
 				});
 			}
-			return true;
-		}
-		
-		if ((args.length == 1 || args.length == 2) && args[0].equals("count")) {
-			final int seconds;
-			if (args.length == 2) {
-				try {
-					seconds = Integer.parseInt(args[1]);
-					if (seconds <= 0) {
-						sender.sendMessage("Number must be positive");
-						return true;
-					}
-				} catch (final NumberFormatException e) {
-					sender.sendMessage("Invalid number '" + args[1] + "'");
-					return true;
-				}
-			} else {
-				seconds = 5;
-			}
-			
-			sender.sendMessage("Measuring average placeholders per second over a period of " + seconds + " seconds..");
-			Main.placeholdersUncached = 0;
-			Main.placeholdersCached = 0;
-			Main.sendAmount = 0;
-			Bukkit.getScheduler().scheduleSyncDelayedTask(Main.instance, () -> {
-				final int addresses = Main.instance.getConfig().getStringList("addresses").size();
-				final int interval = Main.instance.getConfig().getInt("send-interval");
-				final int ticks = (interval * 20) / addresses;
-				sender.sendMessage("Sent data " + Main.sendAmount + " times (task is configured to run once every " + ticks + " ticks");
-				sender.sendMessage("Placeholders collected: " + Main.placeholdersUncached + " (" + Main.placeholdersUncached/seconds + "/s)");
-				sender.sendMessage("Placeholders from cache: " + Main.placeholdersCached + " (" + Main.placeholdersCached/seconds + "/s)");
-				final int total = Main.placeholdersUncached+Main.placeholdersCached;
-				sender.sendMessage("Total placeholders sent: " + total + " (" + total/seconds + "/s)");
-				if (total > 0) {
-					sender.sendMessage(String.format("Cache ratio: %.1f%%", ((float) Main.placeholdersCached / total) * 100));
-				}
-			}, seconds * 20);
 			return true;
 		}
 

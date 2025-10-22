@@ -19,15 +19,6 @@ public class Main extends JavaPlugin {
 
 	static Main instance;
 
-	/*
-	 * Used for measuring the amount of placeholders collected
-	 */
-	static int placeholdersUncached = 0;
-	static int placeholdersCached = 0;
-	static int sendAmount = 0;
-
-	static boolean cacheEnabled = true;
-
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
 
 	Map<String, Addon> addons = new HashMap<>();
@@ -51,10 +42,6 @@ public class Main extends JavaPlugin {
 		restartPingTask();
 
 		registerMetrics();
-
-		getServer().getScheduler().runTaskTimer(this, () -> {
-			Cache.cleanCache();
-		}, 60*60*20, 60*60*20);
 	}
 
 	void loadAddons() {
@@ -144,12 +131,6 @@ public class Main extends JavaPlugin {
 		final int taskIntervalTicks = (int) ((interval * 20f) / addresses);
 
 		this.pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 40, taskIntervalTicks);
-	}
-
-	@Override
-	public void reloadConfig() {
-		super.reloadConfig();
-		cacheEnabled = getConfig().getBoolean("enable-caching", true);
 	}
 
 	private void registerMetrics() {

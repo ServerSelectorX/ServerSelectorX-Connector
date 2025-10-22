@@ -13,4 +13,3 @@ commands:
       /ssxc addons - List installed addons
       /ssxc placeholders <addon> - List placeholders provided by the given addon
       /ssxc status - Show the last time data has been sent for each address
-      /ssxc count [duration] - Count the number of placeholders collected in a specific time

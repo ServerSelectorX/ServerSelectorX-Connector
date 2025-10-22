@@ -3,6 +3,7 @@ package xyz.derkades.ssx_connector;
 import java.io.File;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
@@ -26,13 +27,6 @@ public abstract class Addon implements Listener {
 
 	public abstract String getVersion();
 
-//	public abstract String getLicense();
-	
-	@Deprecated
-	public String getLicense() {
-		return null;
-	}
-
 	public abstract void onLoad();
 
 	protected void registerListeners() {
@@ -43,7 +37,7 @@ public abstract class Addon implements Listener {
 		PlaceholderRegistry.registerPlaceholder(Optional.of(this), key, valueSupplier);
 	}
 
-	protected void addPlayerPlaceholder(final String key, final BiFunction<UUID, String, String> valueFunction) {
+	protected void addPlayerPlaceholder(final String key, final Function<UUID, String> valueFunction) {
 		PlaceholderRegistry.registerPlaceholder(Optional.of(this), key, valueFunction);
 	}
 

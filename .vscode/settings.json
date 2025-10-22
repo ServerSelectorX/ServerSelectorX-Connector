@@ -1,0 +1,10 @@
+{
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "java.cleanup.actions": [
+        "renameFileToType",
+        "addOverride",
+        "addFinalModifier",
+        "organizeImports",
+        "qualifyMembers"
+    ]
+}

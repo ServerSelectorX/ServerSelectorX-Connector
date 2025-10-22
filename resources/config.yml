@@ -1,56 +1,23 @@
-# Addresses of servers to send data to (the server(s) with ServerSelectorX installed).
-# Set the port in 'api.yml' in your ServerSelectorX folder
-addresses:
-- 'localhost:9782'
+# Set to a random string to identify your server network. It must be set to
+# the same value on all your servers. You must use a secure random value,
+# or an attacker can change server placeholders for your network.
+# Example: x0b7b2qeml6cZjXRJgDevmc5hNV (generate your own!)
+network-id: null
 
-# Set this to the name of this server EXACTLY as specified in the bungeecord config.
-server-name: ''
-
-
+# Set this to the name of this server, exactly like in the BungeeCord config.
+server-name: null
 
 
 # -------- Advanced users only ------------
 
+# List of servers to use for exchanging server information. By default,
+# public servers are used. If you wish, you can host your own. The first
+# working server in this list is used.
+placeholder-servers:
+  - http://localhost:8080
+
 # How often the connector plugin sends placeholders, in seconds.
-# If you have multiple servers, the plugin will ping all servers within this time,
-# with a roughly consistent interval. For example:
-# send-interval 4 / 2 addresses = every 2 seconds sending data to a
-# server, so each server will get data every 4 seconds
-# IMPORTANT: If you change this, you must also change the server offline timeout
-# in the ServerSelectorX api.yml configuration file
-send-interval: 4
+send-interval: 5
 
 # Set to true to enable verbose logging
 debug: false
-
-# If you have a lot of placeholders, send data very frequently and/or send data to many servers,
-# collecting placeholders can take a long time and affect server performance.
-# You can fix this by requesting some placeholders less often and requesting placeholders
-# asynchronously where possible.
-
-# Cache placeholders for some amount of seconds. Set to 0 to disable caching.
-# This improves performance by requesting placeholders less frequently.
-
-#cache:
-#  placeholdername: 10
-
-# Retrieve some placeholders asynchronously. They will be requested separate from
-# the main server thread, which means that even if it takes long to request a placeholder
-# it won't affect server performance. Use with caution, not all placeholders can be requested
-# async. Since placeholders are read-only most placeholders should be fine. If you get weird console
-# errors after adding placeholders here, remove them.
-
-#async:
-# - placeholdername
-
-# Default cache duration in seconds. Increasing this helps with lag when sending data to many
-# addresses.
-default-cache-time: 4
-
-# This should generally be set to true. Set it to false for debugging issues
-# that may be related to caching.
-enable-caching: true
-
-# When a player joins this server, send a request to SSX in your hub server if there is a command to run for
-# this player (set by the postjoincommand action). Multiple hub servers are currently not supported.
-post-join-command: false
