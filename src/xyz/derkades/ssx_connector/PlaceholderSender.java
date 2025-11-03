@@ -32,30 +32,6 @@ public class PlaceholderSender implements Runnable {
 
 	@Override
 	public void run() {
-		final FileConfiguration config = Main.instance.getConfig();
-
-		// Only send request to one address every time. When requests have been
-		// sent to all addresses, repopulate the stack so the cycle can start over.
-
-		final String networkId = config.getString("network-id");
-		final String serverName = config.getString("server-name");
-		final List<String> addresses = config.getStringList("placeholder-servers");
-
-		if (networkId == null || networkId.isEmpty()) {
-			this.debug("network-id is not configured");
-			return;
-		}
-
-		if (serverName == null || serverName.isEmpty()) {
-			this.debug("server-name is not configured");
-			return;
-		}
-
-		this.debug("server-name = " + serverName);
-
-		// First get a list of players so we know which player placeholders to send
-		this.debug("players: " + String.join(", " + this.playerUuids));
-
 		// Collect placeholders
 		final JsonObject placeholdersJson = new JsonObject();
 
@@ -86,19 +62,40 @@ public class PlaceholderSender implements Runnable {
 			}
 		}
 
-		final JsonObject json = new JsonObject();
-		json.addProperty("network", networkId);
-		json.addProperty("server", serverName);
-		json.add("placeholders", placeholdersJson);
-
-		final String jsonString = json.toString();
-
-		this.debug("sending json: " + jsonString);
-
-		final byte[] data = jsonString.getBytes();
-
 		// Go async to send placeholders
 		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
+			final FileConfiguration config = Main.instance.getConfig();
+
+			final String networkId = config.getString("network-id");
+			final String serverName = config.getString("server-name");
+			final List<String> addresses = config.getStringList("placeholder-servers");
+
+			if (networkId == null || networkId.isEmpty()) {
+				this.debug("network-id is not configured");
+				return;
+			}
+
+			if (serverName == null || serverName.isEmpty()) {
+				this.debug("server-name is not configured");
+				return;
+			}
+
+			this.debug("server-name = " + serverName);
+
+			// First get a list of players so we know which player placeholders to send
+			this.debug("players: " + String.join(", " + this.playerUuids));
+
+			final JsonObject json = new JsonObject();
+			json.addProperty("network", networkId);
+			json.addProperty("server", serverName);
+			json.add("placeholders", placeholdersJson);
+
+			final String jsonString = json.toString();
+
+			this.debug("sending json: " + jsonString);
+
+			final byte[] data = jsonString.getBytes();
+
 			this.sendPlaceholders(addresses, data);
 		});
 	}

@@ -133,7 +133,7 @@ public class Main extends JavaPlugin {
 		}
 
 		final int intervalTicks = this.getConfig().getInt("send-interval") * 20;
-		this.pingTask = Bukkit.getScheduler().runTaskTimerAsynchronously(this, new PlaceholderSender(), 0, intervalTicks);
+		this.pingTask = Bukkit.getScheduler().runTaskTimer(this, new PlaceholderSender(), 0, intervalTicks);
 	}
 
 	private void registerMetrics() {
