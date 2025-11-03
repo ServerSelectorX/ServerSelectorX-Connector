@@ -45,8 +45,6 @@ public class Main extends JavaPlugin {
 
 		this.getCommand("ssxc").setExecutor(new ConnectorCommand());
 
-		Bukkit.getPluginManager().registerEvents(new PostJoinCommandRunner(), this);
-
 		this.restartPingTask();
 
 		this.registerMetrics();
