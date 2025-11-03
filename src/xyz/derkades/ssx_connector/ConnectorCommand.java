@@ -95,15 +95,12 @@ public class ConnectorCommand implements CommandExecutor {
 			if (PingLogger.isEmpty()) {
 				sender.sendMessage("No data has been sent");
 			} else {
-				sender.sendMessage("Data send history:");
 				PingLogger.forEach((address, status) -> {
 					final long ago = System.currentTimeMillis() - status.getTime();
 					if (status instanceof PingSuccess) {
-						sender.sendMessage(ChatColor.GREEN + String.format("  %s: Pinged successfully %sms ago.",
-								address, ago));
+						sender.sendMessage(String.format("%s%s: working (%sms ago)", ChatColor.GREEN, address, ago));
 					} else {
-						sender.sendMessage(ChatColor.RED + String.format("  %s: Ping failed %sms ago with message \"%s\"",
-								address, ago, ((PingFail) status).getMessage()));
+						sender.sendMessage(String.format("%s%s: failed (%sms ago): %s", ChatColor.RED, address, ago, ((PingFail) status).getMessage()));
 					}
 				});
 			}
