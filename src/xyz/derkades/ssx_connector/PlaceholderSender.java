@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import com.google.gson.JsonArray;
@@ -63,7 +62,7 @@ public class PlaceholderSender implements Runnable {
 		}
 
 		// Go async to send placeholders
-		Bukkit.getScheduler().runTaskAsynchronously(Main.instance, () -> {
+		Main.instance.getScheduler().runAsync(() -> {
 			final FileConfiguration config = Main.instance.getConfig();
 
 			final String networkId = config.getString("network-id");

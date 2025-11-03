@@ -21,21 +21,36 @@ import org.bstats.charts.AdvancedPie;
 import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitTask;
+
+import xyz.derkades.ssx_connector.scheduler.AbstractScheduledTask;
+import xyz.derkades.ssx_connector.scheduler.BukkitSchedulerWrapper;
+import xyz.derkades.ssx_connector.scheduler.FoliaSchedulerWrapper;
+import xyz.derkades.ssx_connector.scheduler.SchedulerWrapper;
 
 public class Main extends JavaPlugin {
 
 	static Main instance;
 
+	private SchedulerWrapper scheduler;
+
 	final File addonsFolder = new File(this.getDataFolder(), "addons");
 
 	Map<String, Addon> addons = new HashMap<>();
 
-	private BukkitTask pingTask = null;
+	private AbstractScheduledTask pingTask = null;
 
 	@Override
 	public void onEnable() {
 		instance = this;
+
+		boolean isFolia;
+		try {
+			Class.forName("io.papermc.paper.threadedregions.RegionizedServer");
+			isFolia = true;
+		} catch (final ClassNotFoundException e) {
+			isFolia = false;
+		}
+		this.scheduler = isFolia ? new FoliaSchedulerWrapper(this) : new BukkitSchedulerWrapper(this);
 
 		super.saveDefaultConfig();
 
@@ -48,6 +63,10 @@ public class Main extends JavaPlugin {
 		this.restartPingTask();
 
 		this.registerMetrics();
+	}
+
+	public SchedulerWrapper getScheduler() {
+		return this.scheduler;
 	}
 
 	void loadAddons() {
@@ -133,7 +152,7 @@ public class Main extends JavaPlugin {
 		}
 
 		final int intervalTicks = this.getConfig().getInt("send-interval") * 20;
-		this.pingTask = Bukkit.getScheduler().runTaskTimer(this, new PlaceholderSender(), 0, intervalTicks);
+		this.pingTask = this.getScheduler().runTimer(new PlaceholderSender(), 0, intervalTicks);
 	}
 
 	private void registerMetrics() {
