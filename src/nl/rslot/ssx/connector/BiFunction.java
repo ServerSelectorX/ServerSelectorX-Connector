@@ -1,4 +1,4 @@
-package xyz.derkades.ssx_connector;
+package nl.rslot.ssx.connector;
 
 @FunctionalInterface
 public interface BiFunction<T,U,R> {

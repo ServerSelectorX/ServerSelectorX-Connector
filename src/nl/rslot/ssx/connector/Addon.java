@@ -1,4 +1,4 @@
-package xyz.derkades.ssx_connector;
+package nl.rslot.ssx.connector;
 
 import java.io.File;
 import java.util.Optional;

@@ -50,7 +50,7 @@
 					<relocations>
 						<relocation>
 							<pattern>org.bstats</pattern>
-							<shadedPattern>xyz.derkades.ssx_connector.lib.bstats</shadedPattern>
+							<shadedPattern>nl.rslot.ssx.connector.bstats</shadedPattern>
 						</relocation>
 					</relocations>
 					<filters>

@@ -1,4 +1,4 @@
-package xyz.derkades.ssx_connector;
+package nl.rslot.ssx.connector;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,9 +18,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import xyz.derkades.ssx_connector.PlaceholderRegistry.GlobalPlaceholder;
-import xyz.derkades.ssx_connector.PlaceholderRegistry.Placeholder;
-import xyz.derkades.ssx_connector.PlaceholderRegistry.PlayerPlaceholder;
+import nl.rslot.ssx.connector.PlaceholderRegistry.GlobalPlaceholder;
+import nl.rslot.ssx.connector.PlaceholderRegistry.Placeholder;
+import nl.rslot.ssx.connector.PlaceholderRegistry.PlayerPlaceholder;
 
 public class PlaceholderSender implements Runnable {
 

@@ -1,4 +1,4 @@
-package xyz.derkades.ssx_connector.scheduler;
+package nl.rslot.ssx.connector.scheduler;
 
 import org.bukkit.scheduler.BukkitTask;
 

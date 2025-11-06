@@ -1,4 +1,4 @@
-package xyz.derkades.ssx_connector;
+package nl.rslot.ssx.connector;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,9 +9,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import net.md_5.bungee.api.ChatColor;
-import xyz.derkades.ssx_connector.PingLogger.PingFail;
-import xyz.derkades.ssx_connector.PingLogger.PingSuccess;
-import xyz.derkades.ssx_connector.PlaceholderRegistry.Placeholder;
+import nl.rslot.ssx.connector.PingLogger.PingFail;
+import nl.rslot.ssx.connector.PingLogger.PingSuccess;
+import nl.rslot.ssx.connector.PlaceholderRegistry.Placeholder;
 
 public class ConnectorCommand implements CommandExecutor {
 

@@ -1,4 +1,4 @@
-package xyz.derkades.ssx_connector;
+package nl.rslot.ssx.connector;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,10 +22,10 @@ import org.bstats.charts.SimplePie;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import xyz.derkades.ssx_connector.scheduler.AbstractScheduledTask;
-import xyz.derkades.ssx_connector.scheduler.BukkitSchedulerWrapper;
-import xyz.derkades.ssx_connector.scheduler.FoliaSchedulerWrapper;
-import xyz.derkades.ssx_connector.scheduler.SchedulerWrapper;
+import nl.rslot.ssx.connector.scheduler.AbstractScheduledTask;
+import nl.rslot.ssx.connector.scheduler.BukkitSchedulerWrapper;
+import nl.rslot.ssx.connector.scheduler.FoliaSchedulerWrapper;
+import nl.rslot.ssx.connector.scheduler.SchedulerWrapper;
 
 public class Main extends JavaPlugin {
 

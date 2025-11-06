@@ -1,5 +1,5 @@
 name: SSX-Connector
-main: xyz.derkades.ssx_connector.Main
+main: nl.rslot.ssx.connector.Main
 version: '@project.version@'
 author: Derkades
 description: 'Addon plugin for ServerSelectorX'
