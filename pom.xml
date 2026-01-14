@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>nl.rslot</groupId>
 	<artifactId>ssx-connector</artifactId>
-	<version>3.0.0-beta</version>
+	<version>3.0.0</version>
 
 	<name>ServerSelectorX-Connector</name>
 
